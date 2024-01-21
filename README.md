@@ -16,9 +16,7 @@ General usage example:
 
 ## Features
 
-This Web Component allows you to:
-
-- Check for…
+This Web Component builds a sparkline based on the required `values` attribute.
 
 ## Installation
 
@@ -41,7 +39,7 @@ Make sure you include the `<script>` in your project (choose one of these):
 <!-- 3rd party CDN, not recommended for production use -->
 <script
   type="module"
-  src="https://www.unpkg.com/@chrisburnell/svg-sparkline@1.0.0/svg-sparkline.js"
+  src="https://www.unpkg.com/@chrisburnell/svg-sparkline@0.0.6/svg-sparkline.js"
 ></script>
 ```
 
@@ -49,7 +47,7 @@ Make sure you include the `<script>` in your project (choose one of these):
 <!-- 3rd party CDN, not recommended for production use -->
 <script
   type="module"
-  src="https://esm.sh/@chrisburnell/svg-sparkline@1.0.0"
+  src="https://esm.sh/@chrisburnell/svg-sparkline@0.0.6"
 ></script>
 ```
 
