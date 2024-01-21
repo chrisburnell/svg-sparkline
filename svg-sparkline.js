@@ -9,15 +9,17 @@ class SVGSparkline extends HTMLElement {
     :host {
       display: grid;
       display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr auto;
       & svg {
         inline-size: auto;
         grid-column: 1 / 3;
         grid-row: 1 / 2;
-        padding: var(--size-tiny-max);
+        padding: var(--svg-sparkline-padding, 0.375rem);
         overflow: visible;
       }
       & span {
-        padding-inline: var(--size-tiny-max);
+        padding-inline: var(--svg-sparkline-padding, 0.375rem);
         &:nth-of-type(1) {
           grid-column: 1 / 2;
           text-align: start;
@@ -32,12 +34,12 @@ class SVGSparkline extends HTMLElement {
       :host([animate]) {
         svg:first-of-type {
           clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-          animation: swipe var(--animation-duration-override, var(--animation-duration, 1s)) linear var(--animation-delay, var(--animation-duration-override, var(--animation-duration, 1s))) forwards;
+          animation: swipe var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-duration, 1s))) forwards;
         }
         svg:last-of-type,
         span {
           opacity: 0;
-          animation: fadein var(--animation-duration-override, var(--animation-duration, 1s)) linear calc(2 * var(--animation-delay, var(--animation-duration-override, var(--animation-duration, 1s)))) forwards;
+          animation: fadein var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear calc(2 * var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)))) forwards;
         }
       }
     }
