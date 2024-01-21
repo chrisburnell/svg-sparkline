@@ -64,6 +64,10 @@ class SVGSparkline extends HTMLElement {
   }
 
   render() {
+    if (!this.hasAttribute("values")) {
+      return
+    }
+
     this.values = this.getAttribute("values").split(",")
     this.width = parseFloat(this.getAttribute("width")) || 160
     this.height = parseFloat(this.getAttribute("height")) || 28
@@ -135,25 +139,27 @@ class SVGSparkline extends HTMLElement {
   }
 
   initTemplate() {
-    let template = document.createElement("template")
-    template.innerHTML = this.render()
-    this.shadowRoot.appendChild(template.content.cloneNode(true))
-  }
+    if (this.shadowRoot) {
+      this.shadowRoot.innerHTML = this.render()
+      return
+    }
 
-  init() {
-    this.attachShadow({
-      mode: "open"
-    });
+    let shadowroot = this.attachShadow({ mode: "open" });
 
     let sheet = new CSSStyleSheet();
-    sheet.replace(SVGSparkline.css);
-    this.shadowRoot.adoptedStyleSheets = [sheet];
+    sheet.replaceSync(SVGSparkline.css);
+    shadowroot.adoptedStyleSheets = [sheet];
 
+    let template = document.createElement("template")
+    template.innerHTML = this.render()
+    shadowroot.appendChild(template.content.cloneNode(true))
+  }
+
+  async init() {
     this.initTemplate()
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    this.shadowRoot.innerHTML = ``
+  attributeChangedCallback() {
     this.initTemplate()
   }
 
