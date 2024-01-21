@@ -74,7 +74,7 @@ class SVGSparkline extends HTMLElement {
     this.values = this.getAttribute("values").split(",")
     this.width = parseFloat(this.getAttribute("width")) || 160
     this.height = parseFloat(this.getAttribute("height")) || 28
-    this.color = this.getAttribute("color") || window.getComputedStyle(this).getPropertyValue("color")
+    this.color = this.getAttribute("color") || "currentColor"
     this.curve = this.getAttribute("curve") === "true"
     this.animationDuration = this.getAttribute("animation-duration") || "1s"
     this.endpoint = this.getAttribute("endpoint") !== "false"
