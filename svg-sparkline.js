@@ -32,13 +32,12 @@ class SVGSparkline extends HTMLElement {
       :host([animate]) {
         svg:first-of-type {
           clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-          transition: transform var(--animation-duration, 1s) var(--transition-function);
-          animation: swipe calc(2 * var(--animation-duration, 1s)) linear var(--animation-duration, 1s) forwards;
+          animation: swipe var(--animation-duration-override, var(--animation-duration, 1s)) linear var(--animation-delay, var(--animation-duration-override, var(--animation-duration, 1s))) forwards;
         }
         svg:last-of-type,
         span {
           opacity: 0;
-          animation: fadein var(--animation-duration, 1s) linear calc(2 * var(--animation-duration, 1s) + var(--animation-duration, 1s)) forwards;
+          animation: fadein var(--animation-duration-override, var(--animation-duration, 1s)) linear calc(2 * var(--animation-delay, var(--animation-duration-override, var(--animation-duration, 1s)))) forwards;
         }
       }
     }
