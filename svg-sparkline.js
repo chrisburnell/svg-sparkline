@@ -102,13 +102,13 @@ class SVGSparkline extends HTMLElement {
       content.push(`
         <defs>
           <linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
-            <stop offset="0%" stop-color="${this.gradientColor}" />
+            <stop offset="0%" stop-color="var(--svg-sparkline-gradient-color, ${this.gradientColor})" />
             <stop offset="100%" stop-color="transparent" />
           </linearGradient>
         </defs>
         <path
             d="${this.getPath(this.values, this.curve ? this.bezierCommand : this.lineCommand)} L ${this.getFinalX(this.values)} ${this.getHighestY(this.values)} L 0 ${this.getHighestY(this.values)} Z"
-            fill="${this.fill ? this.gradientColor : `url('#svg-sparkline-gradient-${gradientID}')`}"
+            fill="${this.fill ? `var(--svg-sparkline-gradient-color, ${this.gradientColor})` : `url('#svg-sparkline-gradient-${gradientID}')`}"
             stroke="transparent"
         />
       `)
@@ -117,7 +117,7 @@ class SVGSparkline extends HTMLElement {
     content.push(`
       <path
           d="${this.getPath(this.values, this.curve ? this.bezierCommand : this.lineCommand)}"
-          stroke="${this.color}"
+          stroke="var(--svg-sparkline-color, ${this.color})"
           stroke-width="${this.lineWidth}"
           stroke-linecap="round"
           fill="transparent"
@@ -130,7 +130,7 @@ class SVGSparkline extends HTMLElement {
     if (this.endpoint) {
       content.push(`
         <svg width="${this.width}px" height="${this.height}px" viewBox="0 0 ${this.width} ${this.height}" preserveAspectRatio="xMaxYMid meet">
-          <circle " r="${this.endpointWidth / 2}" cx="${this.width}" cy="${(this.height / this.getHighestY(this.values)) * this.getFinalY(this.values)}" fill="${this.endpointColor}"></circle>
+          <circle " r="${this.endpointWidth / 2}" cx="${this.width}" cy="${(this.height / this.getHighestY(this.values)) * this.getFinalY(this.values)}" fill="var(--svg-sparkline-endpoint-color, ${this.endpointColor})"></circle>
         </svg>
       `)
     }
