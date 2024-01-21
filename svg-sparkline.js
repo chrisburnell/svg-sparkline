@@ -27,16 +27,18 @@ class SVGSparkline extends HTMLElement {
           text-align: end;
         }
       }
-      &[animate] {
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      :host([animate]) {
         svg:first-of-type {
           clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-          transition: transform var(--transition-duration, 1s) var(--transition-function);
-          animation: swipe calc(2 * var(--transition-duration, 1s)) linear var(--transition-duration, 1s) forwards;
+          transition: transform var(--animation-duration, 1s) var(--transition-function);
+          animation: swipe calc(2 * var(--animation-duration, 1s)) linear var(--animation-duration, 1s) forwards;
         }
         svg:last-of-type,
         span {
           opacity: 0;
-          animation: fadein var(--transition-duration, 1s) linear calc(2 * var(--transition-duration, 1s) + var(--transition-duration, 1s)) forwards;
+          animation: fadein var(--animation-duration, 1s) linear calc(2 * var(--animation-duration, 1s) + var(--animation-duration, 1s)) forwards;
         }
       }
     }
@@ -52,7 +54,7 @@ class SVGSparkline extends HTMLElement {
     }
   `
 
-  static observedAttributes = ["values", "width", "height", "color", "curve", "endpoint", "endpoint-color", "endpoint-width", "fill", "gradient", "gradient-color", "line-width", "start-label", "end-label"]
+  static observedAttributes = ["values", "width", "height", "color", "curve", "animation-duration", "endpoint", "endpoint-color", "endpoint-width", "fill", "gradient", "gradient-color", "line-width", "start-label", "end-label"]
 
   connectedCallback() {
     if (!this.getAttribute("values")) {
@@ -73,6 +75,7 @@ class SVGSparkline extends HTMLElement {
     this.height = parseFloat(this.getAttribute("height")) || 28
     this.color = this.getAttribute("color") || window.getComputedStyle(this).getPropertyValue("color")
     this.curve = this.getAttribute("curve") === "true"
+    this.animationDuration = this.getAttribute("animation-duration") || "1s"
     this.endpoint = this.getAttribute("endpoint") !== "false"
     this.endpointColor = this.getAttribute("endpoint-color") || this.color
     this.endpointWidth = parseFloat(this.getAttribute("endpoint-width")) || 6
@@ -133,6 +136,16 @@ class SVGSparkline extends HTMLElement {
 
     if (this.endLabel) {
       content.push(`<span>${this.endLabel}</span>`)
+    }
+
+    if (this.animate) {
+      content.push(`
+        <style>
+          :host {
+            --animation-duration: ${this.animationDuration};
+          }
+        </style>
+      `)
     }
 
     return content.join("")

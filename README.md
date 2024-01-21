@@ -1,6 +1,6 @@
 # `svg-sparkline`
 
-A Web Component for…
+A Web Component for building an SVG Sparkline.
 
 **[Demo](https://chrisburnell.github.io/svg-sparkline/demo.html)** | **[Further reading](https://chrisburnell.com/svg-sparkline/)**
 
