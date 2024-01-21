@@ -2,7 +2,7 @@
 
 A Web Component for…
 
-**[Demo](https://chrisburnell.github.io/component-template/demo.html)** | **[Further reading](https://chrisburnell.com/svg-sparkline/)**
+**[Demo](https://chrisburnell.github.io/svg-sparkline/demo.html)** | **[Further reading](https://chrisburnell.com/svg-sparkline/)**
 
 ## Examples
 
@@ -57,4 +57,4 @@ Make sure you include the `<script>` in your project (choose one of these):
 
 With thanks to the following people:
 
-- [Zach Leatherman](https://zachleat.com) for inspiring this [Web Component repo template](https://github.com/chrisburnell/component-template)
+- [Zach Leatherman](https://zachleat.com) for inspiring this [Web Component repo template](https://github.com/chrisburnell/svg-sparkline)
