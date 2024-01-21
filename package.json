@@ -1,14 +1,14 @@
 {
-  "name": "@daviddarnes/component-name",
-  "version": "1.0.0",
-  "description": "A Web Component for…",
-  "main": "component-name.js",
+  "name": "@chrisburnell/svg-sparkline",
+  "version": "0.0.1",
+  "description": "A Web Component for building an SVG Sparkline.",
+  "main": "svg-sparkline.js",
   "scripts": {
     "start": "npx http-server ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/daviddarnes/component-name.git"
+    "url": "git+https://github.com/chrisburnell/svg-sparkline.git"
   },
   "keywords": [
     "web",
@@ -22,12 +22,12 @@
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/daviddarnes/component-name/issues"
+    "url": "https://github.com/chrisburnell/svg-sparkline/issues"
   },
   "author": {
-    "name": "David Darnes",
-    "email": "me@daviddarnes.com",
-    "url": "https://darn.es/"
+    "name": "Chris Burnell",
+    "email": "me@chrisburnell.com",
+    "url": "https://chrisburnell.com/"
   },
-  "homepage": "https://github.com/daviddarnes/component-name#readme"
+  "homepage": "https://github.com/chrisburnell/svg-sparkline#readme"
 }
