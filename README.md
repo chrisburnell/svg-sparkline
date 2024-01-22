@@ -39,7 +39,7 @@ Make sure you include the `<script>` in your project (choose one of these):
 <!-- 3rd party CDN, not recommended for production use -->
 <script
   type="module"
-  src="https://www.unpkg.com/@chrisburnell/svg-sparkline@0.0.6/svg-sparkline.js"
+  src="https://www.unpkg.com/@chrisburnell/svg-sparkline@0.0.7/svg-sparkline.js"
 ></script>
 ```
 
@@ -47,7 +47,7 @@ Make sure you include the `<script>` in your project (choose one of these):
 <!-- 3rd party CDN, not recommended for production use -->
 <script
   type="module"
-  src="https://esm.sh/@chrisburnell/svg-sparkline@0.0.6"
+  src="https://esm.sh/@chrisburnell/svg-sparkline@0.0.7"
 ></script>
 ```
 

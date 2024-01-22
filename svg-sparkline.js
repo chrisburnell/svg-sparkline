@@ -1,7 +1,7 @@
 class SVGSparkline extends HTMLElement {
   static register(tagName) {
     if ("customElements" in window) {
-      customElements.define(tagName || "svg-sparkline", SVGSparkline);
+      customElements.define(tagName || "svg-sparkline", SVGSparkline)
     }
   }
 
@@ -158,11 +158,11 @@ class SVGSparkline extends HTMLElement {
       return
     }
 
-    let shadowroot = this.attachShadow({ mode: "open" });
+    let shadowroot = this.attachShadow({ mode: "open" })
 
-    let sheet = new CSSStyleSheet();
-    sheet.replaceSync(SVGSparkline.css);
-    shadowroot.adoptedStyleSheets = [sheet];
+    let sheet = new CSSStyleSheet()
+    sheet.replaceSync(SVGSparkline.css)
+    shadowroot.adoptedStyleSheets = [sheet]
 
     let template = document.createElement("template")
     template.innerHTML = this.render()
@@ -250,16 +250,16 @@ class SVGSparkline extends HTMLElement {
   }
 
   makeID(length) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    let counter = 0;
+    let result = ""
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    const charactersLength = characters.length
+    let counter = 0
     while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
+      result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      counter += 1
     }
-    return result;
+    return result
   }
 }
 
-SVGSparkline.register();
+SVGSparkline.register()
