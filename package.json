@@ -1,6 +1,6 @@
 {
   "name": "@chrisburnell/svg-sparkline",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A Web Component that builds an SVG Sparkline.",
   "main": "svg-sparkline.js",
   "scripts": {

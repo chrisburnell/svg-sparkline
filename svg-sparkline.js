@@ -11,36 +11,34 @@ class SVGSparkline extends HTMLElement {
       display: inline-grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr auto;
-      & svg {
-        inline-size: auto;
-        grid-column: 1 / 3;
-        grid-row: 1 / 2;
-        padding: var(--svg-sparkline-padding, 0.375rem);
-        overflow: visible;
-      }
-      & span {
-        padding-inline: var(--svg-sparkline-padding, 0.375rem);
-        &:nth-of-type(1) {
-          grid-column: 1 / 2;
-          text-align: start;
-        }
-        &:nth-of-type(2) {
-          grid-column: 2 / 3;
-          text-align: end;
-        }
-      }
+    }
+    :host svg {
+      inline-size: auto;
+      grid-column: 1 / 3;
+      grid-row: 1 / 2;
+      padding: var(--svg-sparkline-padding, 0.375rem);
+      overflow: visible;
+    }
+    :host span {
+      padding-inline: var(--svg-sparkline-padding, 0.375rem);
+    }
+    :host span:nth-of-type(1) {
+      grid-column: 1 / 2;
+      text-align: start;
+    }
+    :host span:nth-of-type(2) {
+        grid-column: 2 / 3;
+        text-align: end;
     }
     @media (prefers-reduced-motion: no-preference) {
-      :host([animate]) {
-        svg:first-of-type {
-          clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-          animation: swipe var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-duration, 1s))) forwards;
-        }
-        svg:last-of-type,
-        span {
-          opacity: 0;
-          animation: fadein var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear calc(2 * var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)))) forwards;
-        }
+      :host([animate]) svg:first-of-type {
+        clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+        animation: swipe var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-duration, 1s))) forwards;
+      }
+      :host([animate]) svg:last-of-type,
+      :host([animate]) span {
+        opacity: 0;
+        animation: fadein var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear calc(2 * var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)))) forwards;
       }
     }
     @keyframes swipe {
@@ -169,7 +167,7 @@ class SVGSparkline extends HTMLElement {
     shadowroot.appendChild(template.content.cloneNode(true))
   }
 
-  async init() {
+  init() {
     this.initTemplate()
   }
 
