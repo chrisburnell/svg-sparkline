@@ -31,18 +31,23 @@ class SVGSparkline extends HTMLElement {
         text-align: end;
     }
     @media (prefers-reduced-motion: no-preference) {
-      :host {
+      :host([animate]) {
         --duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
         --first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
         --second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--duration) + var(--first-delay)));
       }
       :host([animate]) svg:first-of-type {
         clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+      }
+      :host([visible]) svg:first-of-type {
         animation: swipe var(--duration) linear var(--first-delay) forwards;
       }
       :host([animate]) svg:last-of-type,
       :host([animate]) span {
         opacity: 0;
+      }
+      :host([visible]) svg:last-of-type,
+      :host([visible]) span {
         animation: fadein var(--duration) linear var(--second-delay) forwards;
       }
     }
@@ -187,6 +192,18 @@ class SVGSparkline extends HTMLElement {
     let template = document.createElement("template")
     template.innerHTML = this.render()
     this.shadowRoot.appendChild(template.content.cloneNode(true))
+
+    const threshold = Math.min(Math.max(Number(this.getAttribute("threshold") || 0.333), 0), 1)
+
+    if (this.hasAttribute("animate")) {
+      const observer = new IntersectionObserver((entries, observer) => {
+        if (entries[0].intersectionRatio > threshold) {
+          this.setAttribute("visible", true)
+          observer.unobserve(this)
+        }
+      }, { threshold: threshold })
+      observer.observe(this)
+    }
   }
 
   init() {
