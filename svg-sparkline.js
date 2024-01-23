@@ -31,14 +31,19 @@ class SVGSparkline extends HTMLElement {
         text-align: end;
     }
     @media (prefers-reduced-motion: no-preference) {
+      :host {
+        --duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
+        --first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
+        --second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--duration) +  * var(--first-delay)));
+      }
       :host([animate]) svg:first-of-type {
         clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-        animation: swipe var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-delay, var(--animation-duration, 1s)))) forwards;
+        animation: swipe var(--duration) linear var(--first-delay) forwards;
       }
       :host([animate]) svg:last-of-type,
       :host([animate]) span {
         opacity: 0;
-        animation: fadein var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear calc(2 * var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-delay, var(--animation-duration, 1s))))) forwards;
+        animation: fadein var(--duration) linear var(--second-delay) forwards;
       }
     }
     @keyframes swipe {
@@ -53,7 +58,7 @@ class SVGSparkline extends HTMLElement {
     }
   `
 
-  static observedAttributes = ["values", "width", "height", "color", "curve", "endpoint", "endpoint-color", "endpoint-width", "fill", "gradient", "gradient-color", "fill-color", "line-width", "start-label", "end-label", "animation-duration", "animation-delay"]
+  static observedAttributes = ["values", "width", "height", "color", "curve", "endpoint", "endpoint-color", "endpoint-width", "fill", "gradient", "fill-color", "gradient-color", "line-width", "start-label", "end-label", "animation-duration", "animation-delay"]
 
   connectedCallback() {
     if (!this.getAttribute("values")) {

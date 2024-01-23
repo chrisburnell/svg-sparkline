@@ -38,6 +38,12 @@ A Web Component that builds an SVG Sparkline.
 <svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" start-label="Start" end-label="End" animate="true" animation-duration="2s"></svg-sparkline>
 ```
 
+### Defined Animation Delay
+
+```html
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" start-label="Start" end-label="End" animate="true" animation-delay="2s"></svg-sparkline>
+```
+
 ### Defined color
 
 ```html
@@ -117,7 +123,7 @@ Make sure you include the `<script>` in your project (choose one of these):
 <!-- 3rd party CDN, not recommended for production use -->
 <script
   type="module"
-  src="https://www.unpkg.com/@chrisburnell/svg-sparkline@1.0.0/svg-sparkline.js"
+  src="https://www.unpkg.com/@chrisburnell/svg-sparkline@1.0.1/svg-sparkline.js"
 ></script>
 ```
 
@@ -125,7 +131,7 @@ Make sure you include the `<script>` in your project (choose one of these):
 <!-- 3rd party CDN, not recommended for production use -->
 <script
   type="module"
-  src="https://esm.sh/@chrisburnell/svg-sparkline@1.0.0"
+  src="https://esm.sh/@chrisburnell/svg-sparkline@1.0.1"
 ></script>
 ```
 
