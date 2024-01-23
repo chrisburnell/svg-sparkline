@@ -6,6 +6,13 @@
     <meta name="description" content="Demo of svg-sparkline Web Component" />
     <title>svg-sparkline Web Component Demo</title>
 
+    <style>
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+        }
+      }
+    </style>
     <script type="module" src="svg-sparkline.js"></script>
   </head>
   <body>
@@ -49,9 +56,13 @@
     <p>
         <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint-color="red"></svg-sparkline>
     </p>
+    <h2>Without endpoint</h2>
+    <p>
+        <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint="false"></svg-sparkline>
+    </p>
     <h2>Defined size</h2>
     <p>
-        <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" width="300" height="50"></svg-sparkline>
+        <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" width="400" height="50"></svg-sparkline>
     </p>
     <h2>Defined line width</h2>
     <p>
@@ -60,10 +71,6 @@
     <h2>Defined endpoint width</h2>
     <p>
         <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint-width="10"></svg-sparkline>
-    </p>
-    <h2>Without endpoint</h2>
-    <p>
-        <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint="false"></svg-sparkline>
     </p>
   </body>
 </html>

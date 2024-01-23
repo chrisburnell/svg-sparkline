@@ -12,33 +12,33 @@ class SVGSparkline extends HTMLElement {
       grid-template-columns: 1fr 1fr;
       grid-template-rows: 1fr auto;
     }
-    :host svg {
+    svg {
       inline-size: auto;
       grid-column: 1 / 3;
       grid-row: 1 / 2;
       padding: var(--svg-sparkline-padding, 0.375rem);
       overflow: visible;
     }
-    :host span {
+    span {
       padding-inline: var(--svg-sparkline-padding, 0.375rem);
     }
-    :host span:nth-of-type(1) {
+    span:nth-of-type(1) {
       grid-column: 1 / 2;
       text-align: start;
     }
-    :host span:nth-of-type(2) {
+    span:nth-of-type(2) {
         grid-column: 2 / 3;
         text-align: end;
     }
     @media (prefers-reduced-motion: no-preference) {
       :host([animate]) svg:first-of-type {
         clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-        animation: swipe var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-duration, 1s))) forwards;
+        animation: swipe var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-delay, var(--animation-duration, 1s)))) forwards;
       }
       :host([animate]) svg:last-of-type,
       :host([animate]) span {
         opacity: 0;
-        animation: fadein var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear calc(2 * var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)))) forwards;
+        animation: fadein var(--svg-sparkline-animation-duration, var(--animation-duration, 1s)) linear calc(2 * var(--svg-sparkline-animation-delay, var(--svg-sparkline-animation-duration, var(--animation-delay, var(--animation-duration, 1s))))) forwards;
       }
     }
     @keyframes swipe {
@@ -53,7 +53,7 @@ class SVGSparkline extends HTMLElement {
     }
   `
 
-  static observedAttributes = ["values", "width", "height", "color", "curve", "animation-duration", "endpoint", "endpoint-color", "endpoint-width", "fill", "gradient", "gradient-color", "line-width", "start-label", "end-label"]
+  static observedAttributes = ["values", "width", "height", "color", "curve", "endpoint", "endpoint-color", "endpoint-width", "fill", "gradient", "gradient-color", "fill-color", "line-width", "start-label", "end-label", "animation-duration", "animation-delay"]
 
   connectedCallback() {
     if (!this.getAttribute("values")) {
@@ -70,11 +70,10 @@ class SVGSparkline extends HTMLElement {
     }
 
     this.values = this.getAttribute("values").split(",")
-    this.width = parseFloat(this.getAttribute("width")) || 160
-    this.height = parseFloat(this.getAttribute("height")) || 28
+    this.width = parseFloat(this.getAttribute("width")) || 200
+    this.height = parseFloat(this.getAttribute("height")) || 36
     this.color = this.getAttribute("color") || "currentColor"
     this.curve = this.getAttribute("curve") === "true"
-    this.animationDuration = this.getAttribute("animation-duration") || "1s"
     this.endpoint = this.getAttribute("endpoint") !== "false"
     this.endpointColor = this.getAttribute("endpoint-color") || this.color
     this.endpointWidth = parseFloat(this.getAttribute("endpoint-width")) || 6
@@ -137,17 +136,37 @@ class SVGSparkline extends HTMLElement {
       content.push(`<span>${this.endLabel}</span>`)
     }
 
-    if (this.animate) {
-      content.push(`
-        <style>
-          :host {
-            --animation-duration: ${this.animationDuration};
-          }
-        </style>
-      `)
-    }
-
     return content.join("")
+  }
+
+  getBaseCSS() {
+    let sheet = new CSSStyleSheet()
+    sheet.replaceSync(SVGSparkline.css)
+
+    return sheet
+  }
+
+  setCSS() {
+    let stylesheets = [this.getBaseCSS()]
+    if (this.hasAttribute("animation-duration")) {
+      let sheet = new CSSStyleSheet()
+      sheet.replaceSync(`
+        :host {
+          --animation-duration: ${this.getAttribute("animation-duration")};
+        }
+      `)
+      stylesheets.push(sheet)
+    }
+    if (this.hasAttribute("animation-delay")) {
+      let sheet = new CSSStyleSheet()
+      sheet.replaceSync(`
+        :host {
+          --animation-delay: ${this.getAttribute("animation-delay")};
+        }
+      `)
+      stylesheets.push(sheet)
+    }
+    this.shadowRoot.adoptedStyleSheets = stylesheets
   }
 
   initTemplate() {
@@ -156,15 +175,13 @@ class SVGSparkline extends HTMLElement {
       return
     }
 
-    let shadowroot = this.attachShadow({ mode: "open" })
+    this.attachShadow({ mode: "open" })
 
-    let sheet = new CSSStyleSheet()
-    sheet.replaceSync(SVGSparkline.css)
-    shadowroot.adoptedStyleSheets = [sheet]
+    this.setCSS()
 
     let template = document.createElement("template")
     template.innerHTML = this.render()
-    shadowroot.appendChild(template.content.cloneNode(true))
+    this.shadowRoot.appendChild(template.content.cloneNode(true))
   }
 
   init() {
@@ -173,6 +190,7 @@ class SVGSparkline extends HTMLElement {
 
   attributeChangedCallback() {
     this.initTemplate()
+    this.setCSS()
   }
 
   static maxDecimals(value, decimals = 2) {
