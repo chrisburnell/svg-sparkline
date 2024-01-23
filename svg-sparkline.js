@@ -34,7 +34,7 @@ class SVGSparkline extends HTMLElement {
       :host {
         --duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
         --first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
-        --second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--duration) +  * var(--first-delay)));
+        --second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--duration) + var(--first-delay)));
       }
       :host([animate]) svg:first-of-type {
         clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
