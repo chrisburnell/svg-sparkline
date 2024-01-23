@@ -59,49 +59,49 @@ A Web Component that builds an SVG Sparkline.
 ### Defined gradient color
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" gradient="true" gradient-color="rebeccapurple"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" gradient="true" gradient-color="rebeccapurple"></svg-sparkline>
 ```
 
 ### Filled
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" fill="true"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" fill="true"></svg-sparkline>
 ```
 
 ### Defined fill color
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" fill="true" fill-color="rebeccapurple"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" fill="true" fill-color="rebeccapurple"></svg-sparkline>
 ```
 
 ### Defined endpoint color
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint-color="red"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" endpoint-color="red"></svg-sparkline>
 ```
 
 ### Defined endpoint width
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint-width="12"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" endpoint-width="12"></svg-sparkline>
 ```
 
 ### Without endpoint
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint="false"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" endpoint="false"></svg-sparkline>
 ```
 
 ### Defined line width
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" line-width="6"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" line-width="6"></svg-sparkline>
 ```
 
 ### Defined width and height
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" width="400" height="100"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" width="400" height="100"></svg-sparkline>
 ```
 
 ## Features
