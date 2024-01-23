@@ -29,19 +29,19 @@ A Web Component that builds an SVG Sparkline.
 ### Animated
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" start-label="Start" end-label="End" animate="true"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" animate="true"></svg-sparkline>
 ```
 
 ### Defined Animation Duration
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" start-label="Start" end-label="End" animate="true" animation-duration="2s"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" animate="true" animation-duration="2s"></svg-sparkline>
 ```
 
 ### Defined Animation Delay
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" start-label="Start" end-label="End" animate="true" animation-delay="2s"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" animate="true" animation-delay="2s"></svg-sparkline>
 ```
 
 ### Defined color
@@ -56,16 +56,22 @@ A Web Component that builds an SVG Sparkline.
 <svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" gradient="true"></svg-sparkline>
 ```
 
+### Defined gradient color
+
+```html
+<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" gradient="true" gradient-color="rebeccapurple"></svg-sparkline>
+```
+
 ### Filled
 
 ```html
 <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" fill="true"></svg-sparkline>
 ```
 
-### Defined gradient color
+### Defined fill color
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" gradient="true" gradient-color="rebeccapurple"></svg-sparkline>
+<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" fill="true" fill-color="rebeccapurple"></svg-sparkline>
 ```
 
 ### Defined endpoint color
@@ -74,10 +80,16 @@ A Web Component that builds an SVG Sparkline.
 <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint-color="red"></svg-sparkline>
 ```
 
-### Defined size
+### Defined endpoint width
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" width="300" height="50"></svg-sparkline>
+<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint-width="12"></svg-sparkline>
+```
+
+### Without endpoint
+
+```html
+<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint="false"></svg-sparkline>
 ```
 
 ### Defined line width
@@ -86,16 +98,10 @@ A Web Component that builds an SVG Sparkline.
 <svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" line-width="6"></svg-sparkline>
 ```
 
-### Defined endpoint width
+### Defined width and height
 
 ```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint-width="10"></svg-sparkline>
-```
-
-### Without endpoint
-
-```html
-<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" endpoint="false"></svg-sparkline>
+<svg-sparkline values="1,4,2,6,6,3,5,2,1,2,3,8" width="400" height="100"></svg-sparkline>
 ```
 
 ## Features
@@ -123,7 +129,7 @@ Make sure you include the `<script>` in your project (choose one of these):
 <!-- 3rd party CDN, not recommended for production use -->
 <script
   type="module"
-  src="https://www.unpkg.com/@chrisburnell/svg-sparkline@1.0.1/svg-sparkline.js"
+  src="https://www.unpkg.com/@chrisburnell/svg-sparkline@1.0.2/svg-sparkline.js"
 ></script>
 ```
 
@@ -131,7 +137,7 @@ Make sure you include the `<script>` in your project (choose one of these):
 <!-- 3rd party CDN, not recommended for production use -->
 <script
   type="module"
-  src="https://esm.sh/@chrisburnell/svg-sparkline@1.0.1"
+  src="https://esm.sh/@chrisburnell/svg-sparkline@1.0.2"
 ></script>
 ```
 
