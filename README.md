@@ -101,7 +101,7 @@ A Web Component that builds an SVG Sparkline.
 ### Defined width and height
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" width="400" height="100"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" width="300" height="100"></svg-sparkline>
 ```
 
 ## Features
