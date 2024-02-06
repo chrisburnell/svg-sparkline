@@ -19,6 +19,9 @@ class SVGSparkline extends HTMLElement {
       padding: var(--svg-sparkline-padding, 0.375rem);
       overflow: visible;
     }
+    svg[aria-hidden] {
+      pointer-events: none;
+    }
     span {
       padding-inline: var(--svg-sparkline-padding, 0.375rem);
     }
@@ -82,17 +85,21 @@ class SVGSparkline extends HTMLElement {
     this.values = this.getAttribute("values").split(",")
     this.width = parseFloat(this.getAttribute("width")) || 200
     this.height = parseFloat(this.getAttribute("height")) || 36
-    this.color = this.getAttribute("color") || "currentColor"
-    this.curve = this.getAttribute("curve") === "true"
+    this.color = this.getAttribute("color")
+    this.curve = this.hasAttribute("curve") && this.getAttribute("curve") !== "false"
     this.endpoint = this.getAttribute("endpoint") !== "false"
-    this.endpointColor = this.getAttribute("endpoint-color") || this.color
+    this.endpointColor = this.getAttribute("endpoint-color")
     this.endpointWidth = parseFloat(this.getAttribute("endpoint-width")) || 6
-    this.fill = this.getAttribute("fill") === "true"
-    this.gradient = this.getAttribute("gradient") === "true"
-    this.gradientColor = this.getAttribute("gradient-color") || this.getAttribute("fill-color") || this.color
+    this.fill = this.hasAttribute("fill") && this.getAttribute("fill") !== "false"
+    this.gradient = this.hasAttribute("gradient") && this.getAttribute("gradient") !== "false"
+    this.gradientColor = this.getAttribute("fill-color") || this.getAttribute("gradient-color")
     this.lineWidth = parseFloat(this.getAttribute("line-width")) || 2
     this.startLabel = this.getAttribute("start-label")
     this.endLabel = this.getAttribute("end-label")
+
+    const color = this.color || `var(--svg-sparkline-color, currentColor)`
+    const endpointColor = this.endpointColor || `var(--svg-sparkline-endpoint-color, ${color})`
+    const gradientColor = this.gradientColor || `var(--svg-sparkline-fill-color, var(--svg-sparkline-gradient-color, ${color}))`
 
     let content = []
 
@@ -101,7 +108,8 @@ class SVGSparkline extends HTMLElement {
     }
 
     content.push(`
-      <svg width="${this.width}px" height="${this.height}px" viewBox="${this.getViewBox(this.values)}" preserveAspectRatio="none">
+      <svg width="${this.width}px" height="${this.height}px" viewBox="${this.getViewBox(this.values)}" preserveAspectRatio="none" role="img">
+        <title>Sparkline ranging from ${this.getMinY(this.values)} to ${this.getMaxY(this.values)}.</title>
     `)
 
     if (this.gradient || this.fill) {
@@ -109,13 +117,13 @@ class SVGSparkline extends HTMLElement {
       content.push(`
         <defs>
           <linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
-            <stop offset="0%" stop-color="var(--svg-sparkline-gradient-color, ${this.gradientColor})" />
+            <stop offset="0%" stop-color="${gradientColor}" />
             <stop offset="100%" stop-color="transparent" />
           </linearGradient>
         </defs>
         <path
-            d="${this.getPath(this.values, this.curve ? this.bezierCommand : this.lineCommand)} L ${this.getFinalX(this.values)} ${this.getHighestY(this.values)} L 0 ${this.getHighestY(this.values)} Z"
-            fill="${this.fill ? `var(--svg-sparkline-gradient-color, ${this.gradientColor})` : `url('#svg-sparkline-gradient-${gradientID}')`}"
+            d="${this.getPath(this.values, this.curve ? this.bezierCommand : this.lineCommand)} L ${this.getFinalX(this.values)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(this.values)} Z"
+            fill="${this.fill ? gradientColor : `url('#svg-sparkline-gradient-${gradientID}')`}"
             stroke="transparent"
         />
       `)
@@ -124,7 +132,7 @@ class SVGSparkline extends HTMLElement {
     content.push(`
       <path
           d="${this.getPath(this.values, this.curve ? this.bezierCommand : this.lineCommand)}"
-          stroke="var(--svg-sparkline-color, ${this.color})"
+          stroke="${color}"
           stroke-width="${this.lineWidth}"
           stroke-linecap="round"
           fill="transparent"
@@ -136,8 +144,8 @@ class SVGSparkline extends HTMLElement {
 
     if (this.endpoint) {
       content.push(`
-        <svg width="${this.width}px" height="${this.height}px" viewBox="0 0 ${this.width} ${this.height}" preserveAspectRatio="xMaxYMid meet">
-          <circle " r="${this.endpointWidth / 2}" cx="${this.width}" cy="${(this.height / this.getHighestY(this.values)) * this.getFinalY(this.values)}" fill="var(--svg-sparkline-endpoint-color, ${this.endpointColor})"></circle>
+        <svg width="${this.width}px" height="${this.height}px" viewBox="0 0 ${this.width} ${this.height}" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
+          <circle r="${this.endpointWidth / 2}" cx="${this.width}" cy="${(this.height / this.getAdjustedMaxY(this.values)) * this.getFinalY(this.values)}" fill="${endpointColor}"></circle>
         </svg>
       `)
     }
@@ -181,7 +189,12 @@ class SVGSparkline extends HTMLElement {
 
   initTemplate() {
     if (this.shadowRoot) {
-      this.shadowRoot.innerHTML = this.render()
+      if (this.innerHTML.trim() === "") {
+        this.shadowRoot.innerHTML = this.render()
+      } else {
+        this.shadowRoot.innerHTML = this.innerHTML
+        this.innerHTML = ""
+      }
       return
     }
 
@@ -283,20 +296,23 @@ class SVGSparkline extends HTMLElement {
     return Math.max(...values) - values[values.length - 1] + 1
   }
 
-  getHighestY(values) {
-    return Math.max(...values) + 2
+  getMinY(values) {
+    return Math.min(...values)
+  }
+
+  getMaxY(values) {
+    return Math.max(...values)
+  }
+
+  getAdjustedMaxY(values) {
+    return this.getMaxY(values) + 2
   }
 
   makeID(length) {
-    let result = ""
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    const charactersLength = characters.length
-    let counter = 0
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength))
-      counter += 1
-    }
-    return result
+    const SEQUENCE = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    return Array.from({ length: length }).reduce((id, _) => {
+      return id + SEQUENCE.charAt(Math.floor(Math.random() * SEQUENCE.length))
+    }, "")
   }
 }
 
