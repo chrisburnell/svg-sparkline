@@ -149,4 +149,4 @@ Make sure you include the `<script>` in your project (choose one of these):
 
 With thanks to the following people:
 
-- [Zach Leatherman](https://zachleat.com) for inspiring this [Web Component repo template](https://github.com/chrisburnell/svg-sparkline)
+- [Zach Leatherman](https://zachleat.com) for inspiring this [Web Component repo template](https://github.com/daviddarnes/component-template)
