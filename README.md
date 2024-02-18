@@ -1,3 +1,7 @@
+<div align="center">
+    <img alt="examples of the SVG Sparkline web component" src="assets/svg-sparkline.png?raw=true" width="460" height="285.5">
+</div>
+
 # `svg-sparkline`
 
 A Web Component that builds an SVG Sparkline.
