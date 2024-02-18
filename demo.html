@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Demo of svg-sparkline Web Component" />
     <title>svg-sparkline Web Component Demo</title>
-
     <style>
       @media (prefers-color-scheme: dark) {
         :root {
@@ -82,7 +81,7 @@
     </p>
     <h2>Server-rendered and hydrated</h2>
     <p>
-        <svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" start-label="Start" end-label="End" animate="true">
+        <svg-sparkline values="8,3,2,7,9,1,5,6,4,10,3,8,2,7,1,9" start-label="Start" end-label="End">
           <span>Start</span>
           <svg width="200px" height="36px" viewBox="0 0 15 12" preserveAspectRatio="none" role="img">
             <title>Sparkline ranging from 1 to 10.</title>
@@ -121,32 +120,6 @@
         span:nth-of-type(2) {
             grid-column: 2 / 3;
             text-align: end;
-        }
-      }
-      @media (prefers-reduced-motion: no-preference) {
-        svg-sparkline[animate]:not(:defined) {
-          --duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
-          --first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
-          --second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--duration) + var(--first-delay)));
-          svg:first-of-type {
-            clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-            animation: swipe var(--duration) linear var(--first-delay) forwards;
-          }
-          svg:last-of-type,
-          span {
-            opacity: 0;
-            animation: fadein var(--duration) linear var(--second-delay) forwards;
-          }
-        }
-      }
-      @keyframes swipe {
-        to {
-          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        }
-      }
-      @keyframes fadein {
-        to {
-          opacity: 1;
         }
       }
     </style>

@@ -122,7 +122,7 @@ class SVGSparkline extends HTMLElement {
           </linearGradient>
         </defs>
         <path
-            d="${this.getPath(this.values, this.curve ? this.bezierCommand : this.lineCommand)} L ${this.getFinalX(this.values)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(this.values)} Z"
+            d="${this.getPath(this.values, this.curve)} L ${this.getFinalX(this.values)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(this.values)} Z"
             fill="${this.fill ? gradientColor : `url('#svg-sparkline-gradient-${gradientID}')`}"
             stroke="transparent"
         />
@@ -131,7 +131,7 @@ class SVGSparkline extends HTMLElement {
 
     content.push(`
       <path
-          d="${this.getPath(this.values, this.curve ? this.bezierCommand : this.lineCommand)}"
+          d="${this.getPath(this.values, this.curve)}"
           stroke="${color}"
           stroke-width="${this.lineWidth}"
           stroke-linecap="round"
@@ -209,12 +209,15 @@ class SVGSparkline extends HTMLElement {
     const threshold = Math.min(Math.max(Number(this.getAttribute("threshold") || 0.333), 0), 1)
 
     if (this.hasAttribute("animate")) {
-      const observer = new IntersectionObserver((entries, observer) => {
-        if (entries[0].intersectionRatio > threshold) {
-          this.setAttribute("visible", true)
-          observer.unobserve(this)
-        }
-      }, { threshold: threshold })
+      const observer = new IntersectionObserver(
+        (entries, observer) => {
+          if (entries[0].intersectionRatio > threshold) {
+            this.setAttribute("visible", true)
+            observer.unobserve(this)
+          }
+        },
+        { threshold: threshold }
+      )
       observer.observe(this)
     }
   }
@@ -228,42 +231,41 @@ class SVGSparkline extends HTMLElement {
     this.setCSS()
   }
 
-  static maxDecimals(value, decimals = 2) {
+  maxDecimals(value, decimals = 2) {
     return +value.toFixed(decimals)
   }
 
   getViewBox(values) {
-    return `0 0 ${values.length - 1} ${Math.max(...values) + 2}`
+    return `0 0 ${values.length - 1} ${this.getAdjustedMaxY(values)}`
   }
 
   lineCommand(point, i) {
     return `L ${i},${point}`
   }
 
-  static line(ax, ay, bx, by) {
+  line(ax, ay, bx, by) {
     const lengthX = bx - ax
     const lengthY = by - ay
 
     return {
       length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
-      angle: Math.atan2(lengthY, lengthX)
+      angle: Math.atan2(lengthY, lengthX),
     }
   }
 
-  static controlPoint(cx, cy, px, py, nx, ny, reverse) {
-    // When the current is the first or last point of the array, previous and
-    // next don't exist. Replace with current.
+  controlPoint(cx, cy, px, py, nx, ny, reverse) {
+    // When the current X,Y are the first or last point of the array,
+    // previous or next X,Y don't exist. Replace with current X,Y.
     px = px || cx
     py = py || cy
     nx = nx || cx
     ny = ny || cy
 
+    const line = this.line(px, py, nx, ny)
+
     const smoothing = 0.2
-
-    const o = SVGSparkline.line(px, py, nx, ny)
-
-    const angle = o.angle + (reverse ? Math.PI : 0)
-    const length = o.length * smoothing
+    const angle = line.angle + (reverse ? Math.PI : 0)
+    const length = line.length * smoothing
 
     const x = cx + Math.cos(angle) * length
     const y = cy + Math.sin(angle) * length
@@ -272,20 +274,22 @@ class SVGSparkline extends HTMLElement {
   }
 
   bezierCommand(point, i, a) {
-    const [csx, csy] = SVGSparkline.controlPoint(i-1, a[i-1], i-2, a[i-2], i, point)
-    const [cex, cey] = SVGSparkline.controlPoint(i, point, i-1, a[i-1], i+1, a[i+1], true)
+    const [csx, csy] = this.controlPoint(i - 1, a[i - 1], i - 2, a[i - 2], i, point)
+    const [cex, cey] = this.controlPoint(i, point, i - 1, a[i - 1], i + 1, a[i + 1], true)
 
-    return `C ${SVGSparkline.maxDecimals(csx)},${SVGSparkline.maxDecimals(csy)} ${SVGSparkline.maxDecimals(cex)},${SVGSparkline.maxDecimals(cey)} ${i},${point}`
+    return `C ${this.maxDecimals(csx)},${this.maxDecimals(csy)} ${this.maxDecimals(cex)},${this.maxDecimals(cey)} ${i},${point}`
   }
 
-  getPath(values, command = this.lineCommand) {
-    return values
-      // flips each point in the vertical range
-      .map((point) => Math.max(...values) - point + 1)
-      // generate a string
-      .reduce((acc, point, i, a) => {
-        return i < 1 ? `M 0,${point}` : `${acc} ${command(point, i, a)}`
-      }, "")
+  getPath(values, curve) {
+    return (
+      values
+        // flips each point in the vertical range
+        .map((point) => Math.max(...values) - point + 1)
+        // generate a string
+        .reduce((acc, point, i, a) => {
+          return i < 1 ? `M 0,${point}` : `${acc} ${curve ? this.bezierCommand(point, i, a) : this.lineCommand(point, i)}`
+        }, "")
+    )
   }
 
   getFinalX(values) {
