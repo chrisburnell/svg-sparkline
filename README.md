@@ -149,4 +149,5 @@ Make sure you include the `<script>` in your project (choose one of these):
 
 With thanks to the following people:
 
-- [Zach Leatherman](https://zachleat.com) for inspiring this [Web Component repo template](https://github.com/daviddarnes/component-template)
+- [David Darnes](https://darn.es) for creating this [Web Component repo template](https://github.com/daviddarnes/component-template)
+- [Jeremy Keith](https://adactio.com) for inspiring me to build my own sparklines based on his [Canvas sparklines](https://adactio.com/journal/5941)
