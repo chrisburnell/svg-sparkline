@@ -15,97 +15,97 @@ A Web Component that builds an SVG Sparkline.
 ```html
 <script type="module" src="svg-sparkline.js"></script>
 
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9"></svg-sparkline>
 ```
 
 ### With curve
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" curve="true"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" curve="true"></svg-sparkline>
 ```
 
 ### Start and End labels
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" start-label="Start" end-label="End"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" start-label="Start" end-label="End"></svg-sparkline>
 ```
 
 ### Animated
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" animate="true"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" animate="true"></svg-sparkline>
 ```
 
 ### Defined Animation Duration
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" animate="true" animation-duration="2s"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" animate="true" animation-duration="2s"></svg-sparkline>
 ```
 
 ### Defined Animation Delay
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" animate="true" animation-delay="2s"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" animate="true" animation-delay="2s"></svg-sparkline>
 ```
 
 ### Defined color
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" color="purple"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" color="purple"></svg-sparkline>
 ```
 
 ### With gradient
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" gradient="true"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" gradient="true"></svg-sparkline>
 ```
 
 ### Defined gradient color
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" gradient="true" gradient-color="rebeccapurple"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" gradient="true" gradient-color="rebeccapurple"></svg-sparkline>
 ```
 
 ### Filled
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" fill="true"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" fill="true"></svg-sparkline>
 ```
 
 ### Defined fill color
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" fill="true" fill-color="rebeccapurple"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" fill="true" fill-color="rebeccapurple"></svg-sparkline>
 ```
 
 ### Defined endpoint color
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" endpoint-color="red"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" endpoint-color="red"></svg-sparkline>
 ```
 
 ### Defined endpoint width
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" endpoint-width="12"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" endpoint-width="12"></svg-sparkline>
 ```
 
 ### Without endpoint
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" endpoint="false"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" endpoint="false"></svg-sparkline>
 ```
 
 ### Defined line width
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" line-width="6"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" line-width="6"></svg-sparkline>
 ```
 
 ### Defined width and height
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,10,3,8,2,7,1,9" width="300" height="100"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" width="300" height="100"></svg-sparkline>
 ```
 
 ## Features

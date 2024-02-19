@@ -19,7 +19,8 @@ class SVGSparkline extends HTMLElement {
       padding: var(--svg-sparkline-padding, 0.375rem);
       overflow: visible;
     }
-    svg:has(title) {
+    :host(:not([curve])) svg:has(title),
+    :host(:not([curve="true"])) svg:has(title) {
       overflow-y: hidden;
     }
     svg[aria-hidden] {
@@ -282,11 +283,11 @@ class SVGSparkline extends HTMLElement {
     return [x, y]
   }
 
-  bezierCommand(point, i, a) {
+  bezierCommand(point, i, a, maxY) {
     const [csx, csy] = this.controlPoint(i - 1, a[i - 1], i - 2, a[i - 2], i, point)
     const [cex, cey] = this.controlPoint(i, point, i - 1, a[i - 1], i + 1, a[i + 1], true)
 
-    return `C ${this.maxDecimals(csx)},${this.maxDecimals(csy)} ${this.maxDecimals(cex)},${this.maxDecimals(cey)} ${i},${point}`
+    return `C ${this.maxDecimals(csx)},${Math.min(maxY, this.maxDecimals(csy))} ${this.maxDecimals(cex)},${Math.min(maxY, this.maxDecimals(cey))} ${i},${point}`
   }
 
   getPath(values, curve) {
@@ -296,7 +297,7 @@ class SVGSparkline extends HTMLElement {
         .map((point) => Math.max(...values) - point + 1)
         // generate a string
         .reduce((acc, point, i, a) => {
-          return i < 1 ? `M 0,${point}` : `${acc} ${curve ? this.bezierCommand(point, i, a) : this.lineCommand(point, i)}`
+          return i < 1 ? `M 0,${point}` : `${acc} ${curve ? this.bezierCommand(point, i, a, this.getAdjustedMaxY(values)) : this.lineCommand(point, i)}`
         }, "")
     )
   }
