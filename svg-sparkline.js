@@ -112,8 +112,9 @@ class SVGSparkline extends HTMLElement {
         <title>Sparkline ranging from ${this.getMinY(this.values)} to ${this.getMaxY(this.values)}.</title>
     `)
 
-    if (this.gradient || this.fill) {
-      const gradientID = this.makeID(6)
+    let gradientID
+    if (this.gradient) {
+      gradientID = this.makeID(6)
       content.push(`
         <defs>
           <linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
@@ -121,6 +122,11 @@ class SVGSparkline extends HTMLElement {
             <stop offset="100%" stop-color="transparent" />
           </linearGradient>
         </defs>
+      `)
+    }
+
+    if (this.gradient || this.fill) {
+      content.push(`
         <path
             d="${this.getPath(this.values, this.curve)} L ${this.getFinalX(this.values)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(this.values)} Z"
             fill="${this.fill ? gradientColor : `url('#svg-sparkline-gradient-${gradientID}')`}"
@@ -309,7 +315,7 @@ class SVGSparkline extends HTMLElement {
   }
 
   getAdjustedMaxY(values) {
-    return this.getMaxY(values) + 2
+    return this.getMaxY(values) + 1
   }
 
   makeID(length) {
