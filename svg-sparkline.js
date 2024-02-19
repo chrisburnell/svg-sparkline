@@ -19,6 +19,9 @@ class SVGSparkline extends HTMLElement {
       padding: var(--svg-sparkline-padding, 0.375rem);
       overflow: visible;
     }
+    svg:has(title) {
+      overflow-y: hidden;
+    }
     svg[aria-hidden] {
       pointer-events: none;
     }
