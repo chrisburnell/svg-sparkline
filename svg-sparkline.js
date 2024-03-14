@@ -111,9 +111,10 @@ class SVGSparkline extends HTMLElement {
       content.push(`<span>${this.startLabel}</span>`)
     }
 
+    const title = this.title || `Sparkline ranging from ${this.getMinY(this.values)} to ${this.getMaxY(this.values)}.`;
     content.push(`
       <svg width="${this.width}px" height="${this.height}px" viewBox="${this.getViewBox(this.values)}" preserveAspectRatio="none" role="img">
-        <title>Sparkline ranging from ${this.getMinY(this.values)} to ${this.getMaxY(this.values)}.</title>
+        <title>${title}</title>
     `)
 
     let gradientID
