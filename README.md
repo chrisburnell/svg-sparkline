@@ -108,6 +108,12 @@ A Web Component that builds an SVG Sparkline.
 <svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" width="300" height="100"></svg-sparkline>
 ```
 
+### Set a custom title
+
+```html
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" title="Sparkline with a custom title"></svg-sparkline>
+```
+
 ## Features
 
 This Web Component builds a sparkline based on the required `values` attribute.
