@@ -123,8 +123,8 @@ class SVGSparkline extends HTMLElement {
       content.push(`
         <defs>
           <linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
-            <stop offset="0%" stop-color="${gradientColor}" />
-            <stop offset="100%" stop-color="transparent" />
+            <stop offset="0%" stop-color="${gradientColor}" stop-opacity="1" />
+            <stop offset="100%" stop-color="${gradientColor}" stop-opacity="0" />
           </linearGradient>
         </defs>
       `)
