@@ -1,26 +1,13 @@
 {
   "name": "@chrisburnell/svg-sparkline",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "A Web Component that builds an SVG Sparkline.",
-  "main": "svg-sparkline.js",
-  "scripts": {
-    "start": "npx http-server ."
-  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chrisburnell/svg-sparkline.git"
   },
-  "keywords": [
-    "web",
-    "component",
-    "components",
-    "web components",
-    "custom elements"
-  ],
-  "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
+  "homepage": "https://github.com/chrisburnell/svg-sparkline#readme",
   "bugs": {
     "url": "https://github.com/chrisburnell/svg-sparkline/issues"
   },
@@ -29,5 +16,18 @@
     "email": "me@chrisburnell.com",
     "url": "https://chrisburnell.com/"
   },
-  "homepage": "https://github.com/chrisburnell/svg-sparkline#readme"
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "svg-sparkline.js",
+  "scripts": {
+    "start": "npx http-server ."
+  },
+  "keywords": [
+    "component",
+    "components",
+    "custom elements",
+    "web",
+    "web components"
+  ]
 }

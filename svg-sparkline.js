@@ -34,8 +34,8 @@ class SVGSparkline extends HTMLElement {
       text-align: start;
     }
     span:nth-of-type(2) {
-        grid-column: 2 / 3;
-        text-align: end;
+      grid-column: 2 / 3;
+      text-align: end;
     }
     @media (prefers-reduced-motion: no-preference) {
       :host([animate]) {
@@ -119,7 +119,7 @@ class SVGSparkline extends HTMLElement {
 
     let gradientID
     if (this.gradient) {
-      gradientID = this.makeID(6)
+      gradientID = this.makeID()
       content.push(`
         <defs>
           <linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
@@ -130,7 +130,7 @@ class SVGSparkline extends HTMLElement {
       `)
     }
 
-    if (this.gradient || this.fill) {
+    if (this.fill || this.gradient) {
       content.push(`
         <path
             d="${this.getPath(this.values, this.curve)} L ${this.getFinalX(this.values)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(this.values)} Z"
@@ -323,9 +323,9 @@ class SVGSparkline extends HTMLElement {
     return this.getMaxY(values) + 1
   }
 
-  makeID(length) {
+  makeID() {
     const SEQUENCE = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-    return Array.from({ length: length }).reduce((id, _) => {
+    return Array.from({ length: 6 }).reduce((id, _) => {
       return id + SEQUENCE.charAt(Math.floor(Math.random() * SEQUENCE.length))
     }, "")
   }
