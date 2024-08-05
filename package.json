@@ -1,6 +1,6 @@
 {
   "name": "@chrisburnell/svg-sparkline",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "A Web Component that builds an SVG Sparkline.",
   "license": "MIT",
   "repository": {
@@ -16,8 +16,26 @@
     "email": "me@chrisburnell.com",
     "url": "https://chrisburnell.com/"
   },
+  "contributors": [
+    {
+      "name": "Chris Burnell",
+      "email": "me@chrisburnell.com",
+      "url": "https://chrisburnell.com"
+    }
+  ],
+  "funding": [
+    {
+      "type": "buymeacoffee",
+      "url": "https://buymeacoffee.com/chrisburnell"
+    },
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/chrisburnell"
+    }
+  ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "main": "svg-sparkline.js",
   "scripts": {
