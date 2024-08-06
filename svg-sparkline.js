@@ -1,11 +1,11 @@
 class SVGSparkline extends HTMLElement {
-    static register(tagName) {
-        if ("customElements" in window) {
-            customElements.define(tagName || "svg-sparkline", SVGSparkline);
-        }
-    }
+	static register(tagName) {
+		if ("customElements" in window) {
+			customElements.define(tagName || "svg-sparkline", SVGSparkline);
+		}
+	}
 
-    static css = `
+	static css = `
     :host {
       display: grid;
       display: inline-grid;
@@ -70,89 +70,89 @@ class SVGSparkline extends HTMLElement {
     }
   `;
 
-    static observedAttributes = [
-        "values",
-        "width",
-        "height",
-        "color",
-        "curve",
-        "endpoint",
-        "endpoint-color",
-        "endpoint-width",
-        "fill",
-        "gradient",
-        "fill-color",
-        "gradient-color",
-        "line-width",
-        "start-label",
-        "end-label",
-        "animation-duration",
-        "animation-delay",
-    ];
+	static observedAttributes = [
+		"values",
+		"width",
+		"height",
+		"color",
+		"curve",
+		"endpoint",
+		"endpoint-color",
+		"endpoint-width",
+		"fill",
+		"gradient",
+		"fill-color",
+		"gradient-color",
+		"line-width",
+		"start-label",
+		"end-label",
+		"animation-duration",
+		"animation-delay",
+	];
 
-    connectedCallback() {
-        if (!this.getAttribute("values")) {
-            console.error(`Missing \`values\` attribute!`, this);
-            return;
-        }
+	connectedCallback() {
+		if (!this.getAttribute("values")) {
+			console.error(`Missing \`values\` attribute!`, this);
+			return;
+		}
 
-        this.init();
-    }
+		this.init();
+	}
 
-    render() {
-        if (!this.hasAttribute("values")) {
-            return;
-        }
+	render() {
+		if (!this.hasAttribute("values")) {
+			return;
+		}
 
-        this.values = this.getAttribute("values").split(",");
-        this.width = parseFloat(this.getAttribute("width")) || 200;
-        this.height = parseFloat(this.getAttribute("height")) || 36;
-        this.color = this.getAttribute("color");
-        this.curve =
-            this.hasAttribute("curve") &&
-            this.getAttribute("curve") !== "false";
-        this.endpoint = this.getAttribute("endpoint") !== "false";
-        this.endpointColor = this.getAttribute("endpoint-color");
-        this.endpointWidth =
-            parseFloat(this.getAttribute("endpoint-width")) || 6;
-        this.fill =
-            this.hasAttribute("fill") && this.getAttribute("fill") !== "false";
-        this.gradient =
-            this.hasAttribute("gradient") &&
-            this.getAttribute("gradient") !== "false";
-        this.gradientColor =
-            this.getAttribute("fill-color") ||
-            this.getAttribute("gradient-color");
-        this.lineWidth = parseFloat(this.getAttribute("line-width")) || 2;
-        this.startLabel = this.getAttribute("start-label");
-        this.endLabel = this.getAttribute("end-label");
+		this.values = this.getAttribute("values").split(",");
+		this.width = parseFloat(this.getAttribute("width")) || 200;
+		this.height = parseFloat(this.getAttribute("height")) || 36;
+		this.color = this.getAttribute("color");
+		this.curve =
+			this.hasAttribute("curve") &&
+			this.getAttribute("curve") !== "false";
+		this.endpoint = this.getAttribute("endpoint") !== "false";
+		this.endpointColor = this.getAttribute("endpoint-color");
+		this.endpointWidth =
+			parseFloat(this.getAttribute("endpoint-width")) || 6;
+		this.fill =
+			this.hasAttribute("fill") && this.getAttribute("fill") !== "false";
+		this.gradient =
+			this.hasAttribute("gradient") &&
+			this.getAttribute("gradient") !== "false";
+		this.gradientColor =
+			this.getAttribute("fill-color") ||
+			this.getAttribute("gradient-color");
+		this.lineWidth = parseFloat(this.getAttribute("line-width")) || 2;
+		this.startLabel = this.getAttribute("start-label");
+		this.endLabel = this.getAttribute("end-label");
 
-        const color = this.color || `var(--svg-sparkline-color, currentColor)`;
-        const endpointColor =
-            this.endpointColor ||
-            `var(--svg-sparkline-endpoint-color, ${color})`;
-        const gradientColor =
-            this.gradientColor ||
-            `var(--svg-sparkline-fill-color, var(--svg-sparkline-gradient-color, ${color}))`;
+		const color = this.color || `var(--svg-sparkline-color, currentColor)`;
+		const endpointColor =
+			this.endpointColor ||
+			`var(--svg-sparkline-endpoint-color, ${color})`;
+		const gradientColor =
+			this.gradientColor ||
+			`var(--svg-sparkline-fill-color, var(--svg-sparkline-gradient-color, ${color}))`;
 
-        let content = [];
+		let content = [];
 
-        if (this.startLabel) {
-            content.push(`<span>${this.startLabel}</span>`);
-        }
+		if (this.startLabel) {
+			content.push(`<span>${this.startLabel}</span>`);
+		}
 
-        const title =
-            this.title ||
-            `Sparkline ranging from ${this.getMinY(this.values)} to ${this.getMaxY(this.values)}.`;
-        content.push(`
+		const title =
+			this.title ||
+			`Sparkline ranging from ${this.getMinY(this.values)} to ${this.getMaxY(this.values)}.`;
+		content.push(`
       <svg width="${this.width}px" height="${this.height}px" viewBox="${this.getViewBox(this.values)}" preserveAspectRatio="none" role="img">
         <title>${title}</title>
     `);
 
-        let gradientID;
-        if (this.gradient) {
-            gradientID = this.makeID();
-            content.push(`
+		let gradientID;
+		if (this.gradient) {
+			gradientID = this.makeID();
+			content.push(`
         <defs>
           <linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
             <stop offset="0%" stop-color="${gradientColor}" stop-opacity="1" />
@@ -160,19 +160,19 @@ class SVGSparkline extends HTMLElement {
           </linearGradient>
         </defs>
       `);
-        }
+		}
 
-        if (this.fill || this.gradient) {
-            content.push(`
+		if (this.fill || this.gradient) {
+			content.push(`
         <path
             d="${this.getPath(this.values, this.curve)} L ${this.getFinalX(this.values)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(this.values)} Z"
             fill="${this.fill ? gradientColor : `url('#svg-sparkline-gradient-${gradientID}')`}"
             stroke="transparent"
         />
       `);
-        }
+		}
 
-        content.push(`
+		content.push(`
       <path
           d="${this.getPath(this.values, this.curve)}"
           stroke="${color}"
@@ -183,208 +183,208 @@ class SVGSparkline extends HTMLElement {
       />
     `);
 
-        content.push(`</svg>`);
+		content.push(`</svg>`);
 
-        if (this.endpoint) {
-            content.push(`
+		if (this.endpoint) {
+			content.push(`
         <svg width="${this.width}px" height="${this.height}px" viewBox="0 0 ${this.width} ${this.height}" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
           <circle r="${this.endpointWidth / 2}" cx="${this.width}" cy="${(this.height / this.getAdjustedMaxY(this.values)) * this.getFinalY(this.values)}" fill="${endpointColor}"></circle>
         </svg>
       `);
-        }
+		}
 
-        if (this.endLabel) {
-            content.push(`<span>${this.endLabel}</span>`);
-        }
+		if (this.endLabel) {
+			content.push(`<span>${this.endLabel}</span>`);
+		}
 
-        return content.join("");
-    }
+		return content.join("");
+	}
 
-    getBaseCSS() {
-        let sheet = new CSSStyleSheet();
-        sheet.replaceSync(SVGSparkline.css);
+	getBaseCSS() {
+		let sheet = new CSSStyleSheet();
+		sheet.replaceSync(SVGSparkline.css);
 
-        return sheet;
-    }
+		return sheet;
+	}
 
-    setCSS() {
-        let stylesheets = [this.getBaseCSS()];
-        if (this.hasAttribute("animation-duration")) {
-            let sheet = new CSSStyleSheet();
-            sheet.replaceSync(`
+	setCSS() {
+		let stylesheets = [this.getBaseCSS()];
+		if (this.hasAttribute("animation-duration")) {
+			let sheet = new CSSStyleSheet();
+			sheet.replaceSync(`
         :host {
           --animation-duration: ${this.getAttribute("animation-duration")};
         }
       `);
-            stylesheets.push(sheet);
-        }
-        if (this.hasAttribute("animation-delay")) {
-            let sheet = new CSSStyleSheet();
-            sheet.replaceSync(`
+			stylesheets.push(sheet);
+		}
+		if (this.hasAttribute("animation-delay")) {
+			let sheet = new CSSStyleSheet();
+			sheet.replaceSync(`
         :host {
           --animation-delay: ${this.getAttribute("animation-delay")};
         }
       `);
-            stylesheets.push(sheet);
-        }
-        this.shadowRoot.adoptedStyleSheets = stylesheets;
-    }
+			stylesheets.push(sheet);
+		}
+		this.shadowRoot.adoptedStyleSheets = stylesheets;
+	}
 
-    initTemplate() {
-        if (this.shadowRoot) {
-            if (this.innerHTML.trim() === "") {
-                this.shadowRoot.innerHTML = this.render();
-            } else {
-                this.shadowRoot.innerHTML = this.innerHTML;
-                this.innerHTML = "";
-            }
-            return;
-        }
+	initTemplate() {
+		if (this.shadowRoot) {
+			if (this.innerHTML.trim() === "") {
+				this.shadowRoot.innerHTML = this.render();
+			} else {
+				this.shadowRoot.innerHTML = this.innerHTML;
+				this.innerHTML = "";
+			}
+			return;
+		}
 
-        this.attachShadow({ mode: "open" });
+		this.attachShadow({ mode: "open" });
 
-        this.setCSS();
+		this.setCSS();
 
-        let template = document.createElement("template");
-        template.innerHTML = this.render();
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+		let template = document.createElement("template");
+		template.innerHTML = this.render();
+		this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-        const threshold = Math.min(
-            Math.max(Number(this.getAttribute("threshold") || 0.333), 0),
-            1,
-        );
+		const threshold = Math.min(
+			Math.max(Number(this.getAttribute("threshold") || 0.333), 0),
+			1,
+		);
 
-        if (this.hasAttribute("animate")) {
-            const observer = new IntersectionObserver(
-                (entries, observer) => {
-                    if (entries[0].intersectionRatio > threshold) {
-                        this.setAttribute("visible", true);
-                        observer.unobserve(this);
-                    }
-                },
-                { threshold: threshold },
-            );
-            observer.observe(this);
-        }
-    }
+		if (this.hasAttribute("animate")) {
+			const observer = new IntersectionObserver(
+				(entries, observer) => {
+					if (entries[0].intersectionRatio > threshold) {
+						this.setAttribute("visible", true);
+						observer.unobserve(this);
+					}
+				},
+				{ threshold: threshold },
+			);
+			observer.observe(this);
+		}
+	}
 
-    init() {
-        this.initTemplate();
-    }
+	init() {
+		this.initTemplate();
+	}
 
-    attributeChangedCallback() {
-        this.initTemplate();
-        this.setCSS();
-    }
+	attributeChangedCallback() {
+		this.initTemplate();
+		this.setCSS();
+	}
 
-    maxDecimals(value, decimals = 2) {
-        return +value.toFixed(decimals);
-    }
+	maxDecimals(value, decimals = 2) {
+		return +value.toFixed(decimals);
+	}
 
-    getViewBox(values) {
-        return `0 0 ${values.length - 1} ${this.getAdjustedMaxY(values)}`;
-    }
+	getViewBox(values) {
+		return `0 0 ${values.length - 1} ${this.getAdjustedMaxY(values)}`;
+	}
 
-    lineCommand(point, i) {
-        return `L ${i},${point}`;
-    }
+	lineCommand(point, i) {
+		return `L ${i},${point}`;
+	}
 
-    line(ax, ay, bx, by) {
-        const lengthX = bx - ax;
-        const lengthY = by - ay;
+	line(ax, ay, bx, by) {
+		const lengthX = bx - ax;
+		const lengthY = by - ay;
 
-        return {
-            length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
-            angle: Math.atan2(lengthY, lengthX),
-        };
-    }
+		return {
+			length: Math.sqrt(Math.pow(lengthX, 2) + Math.pow(lengthY, 2)),
+			angle: Math.atan2(lengthY, lengthX),
+		};
+	}
 
-    controlPoint(cx, cy, px, py, nx, ny, reverse) {
-        // When the current X,Y are the first or last point of the array,
-        // previous or next X,Y don't exist. Replace with current X,Y.
-        px = px || cx;
-        py = py || cy;
-        nx = nx || cx;
-        ny = ny || cy;
+	controlPoint(cx, cy, px, py, nx, ny, reverse) {
+		// When the current X,Y are the first or last point of the array,
+		// previous or next X,Y don't exist. Replace with current X,Y.
+		px = px || cx;
+		py = py || cy;
+		nx = nx || cx;
+		ny = ny || cy;
 
-        const line = this.line(px, py, nx, ny);
+		const line = this.line(px, py, nx, ny);
 
-        const smoothing = 0.2;
-        const angle = line.angle + (reverse ? Math.PI : 0);
-        const length = line.length * smoothing;
+		const smoothing = 0.2;
+		const angle = line.angle + (reverse ? Math.PI : 0);
+		const length = line.length * smoothing;
 
-        const x = cx + Math.cos(angle) * length;
-        const y = cy + Math.sin(angle) * length;
+		const x = cx + Math.cos(angle) * length;
+		const y = cy + Math.sin(angle) * length;
 
-        return [x, y];
-    }
+		return [x, y];
+	}
 
-    bezierCommand(point, i, a, maxY) {
-        const [csx, csy] = this.controlPoint(
-            i - 1,
-            a[i - 1],
-            i - 2,
-            a[i - 2],
-            i,
-            point,
-        );
-        const [cex, cey] = this.controlPoint(
-            i,
-            point,
-            i - 1,
-            a[i - 1],
-            i + 1,
-            a[i + 1],
-            true,
-        );
+	bezierCommand(point, i, a, maxY) {
+		const [csx, csy] = this.controlPoint(
+			i - 1,
+			a[i - 1],
+			i - 2,
+			a[i - 2],
+			i,
+			point,
+		);
+		const [cex, cey] = this.controlPoint(
+			i,
+			point,
+			i - 1,
+			a[i - 1],
+			i + 1,
+			a[i + 1],
+			true,
+		);
 
-        return `C ${this.maxDecimals(csx)},${Math.min(maxY, this.maxDecimals(csy))} ${this.maxDecimals(cex)},${Math.min(maxY, this.maxDecimals(cey))} ${i},${point}`;
-    }
+		return `C ${this.maxDecimals(csx)},${Math.min(maxY, this.maxDecimals(csy))} ${this.maxDecimals(cex)},${Math.min(maxY, this.maxDecimals(cey))} ${i},${point}`;
+	}
 
-    getPath(values, curve) {
-        return (
-            values
-                // flips each point in the vertical range
-                .map((point) => Math.max(...values) - point + 1)
-                // generate a string
-                .reduce((acc, point, i, a) => {
-                    return i < 1
-                        ? `M 0,${point}`
-                        : `${acc} ${curve ? this.bezierCommand(point, i, a, this.getAdjustedMaxY(values)) : this.lineCommand(point, i)}`;
-                }, "")
-        );
-    }
+	getPath(values, curve) {
+		return (
+			values
+				// flips each point in the vertical range
+				.map((point) => Math.max(...values) - point + 1)
+				// generate a string
+				.reduce((acc, point, i, a) => {
+					return i < 1
+						? `M 0,${point}`
+						: `${acc} ${curve ? this.bezierCommand(point, i, a, this.getAdjustedMaxY(values)) : this.lineCommand(point, i)}`;
+				}, "")
+		);
+	}
 
-    getFinalX(values) {
-        return values.length - 1;
-    }
+	getFinalX(values) {
+		return values.length - 1;
+	}
 
-    getFinalY(values) {
-        return Math.max(...values) - values[values.length - 1] + 1;
-    }
+	getFinalY(values) {
+		return Math.max(...values) - values[values.length - 1] + 1;
+	}
 
-    getMinY(values) {
-        return Math.min(...values);
-    }
+	getMinY(values) {
+		return Math.min(...values);
+	}
 
-    getMaxY(values) {
-        return Math.max(...values);
-    }
+	getMaxY(values) {
+		return Math.max(...values);
+	}
 
-    getAdjustedMaxY(values) {
-        return this.getMaxY(values) + 1;
-    }
+	getAdjustedMaxY(values) {
+		return this.getMaxY(values) + 1;
+	}
 
-    makeID() {
-        const SEQUENCE =
-            "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-        return Array.from({ length: 6 }).reduce((id, _) => {
-            return (
-                id +
-                SEQUENCE.charAt(Math.floor(Math.random() * SEQUENCE.length))
-            );
-        }, "");
-    }
+	makeID() {
+		const SEQUENCE =
+			"0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+		return Array.from({ length: 6 }).reduce((id, _) => {
+			return (
+				id +
+				SEQUENCE.charAt(Math.floor(Math.random() * SEQUENCE.length))
+			);
+		}, "");
+	}
 }
 
 SVGSparkline.register();
