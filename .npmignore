@@ -4,5 +4,6 @@
 .editorconfig
 .eslintrc.json
 .prettierrc
+.prettierignore
 assets
 demo.html
