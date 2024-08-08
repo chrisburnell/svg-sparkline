@@ -1,4 +1,4 @@
-class SVGSparkline extends HTMLElement {
+export default class SVGSparkline extends HTMLElement {
 	static register(tagName) {
 		if ("customElements" in window) {
 			customElements.define(tagName || "svg-sparkline", SVGSparkline);
@@ -6,69 +6,69 @@ class SVGSparkline extends HTMLElement {
 	}
 
 	static css = `
-    :host {
-      display: grid;
-      display: inline-grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr auto;
-    }
-    svg {
-      inline-size: auto;
-      grid-column: 1 / 3;
-      grid-row: 1 / 2;
-      padding: var(--svg-sparkline-padding, 0.375rem);
-      overflow: visible;
-    }
-    :host(:not([curve])) svg:has(title),
-    :host(:not([curve="true"])) svg:has(title) {
-      overflow-y: hidden;
-    }
-    svg[aria-hidden] {
-      pointer-events: none;
-    }
-    span {
-      padding-inline: var(--svg-sparkline-padding, 0.375rem);
-    }
-    span:nth-of-type(1) {
-      grid-column: 1 / 2;
-      text-align: start;
-    }
-    span:nth-of-type(2) {
-      grid-column: 2 / 3;
-      text-align: end;
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      :host([animate]) {
-        --duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
-        --first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
-        --second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--duration) + var(--first-delay)));
-      }
-      :host([animate]) svg:first-of-type {
-        clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-      }
-      :host([visible]) svg:first-of-type {
-        animation: swipe var(--duration) linear var(--first-delay) forwards;
-      }
-      :host([animate]) svg:last-of-type,
-      :host([animate]) span {
-        opacity: 0;
-      }
-      :host([visible]) svg:last-of-type,
-      :host([visible]) span {
-        animation: fadein var(--duration) linear var(--second-delay) forwards;
-      }
-    }
-    @keyframes swipe {
-      to {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-      }
-    }
-    @keyframes fadein {
-      to {
-        opacity: 1;
-      }
-    }
-  `;
+		:host {
+			display: grid;
+			display: inline-grid;
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: 1fr auto;
+		}
+		svg {
+			inline-size: auto;
+			grid-column: 1 / 3;
+			grid-row: 1 / 2;
+			padding: var(--svg-sparkline-padding, 0.375rem);
+			overflow: visible;
+		}
+		:host(:not([curve])) svg:has(title),
+		:host(:not([curve="true"])) svg:has(title) {
+			overflow-y: hidden;
+		}
+		svg[aria-hidden] {
+			pointer-events: none;
+		}
+		span {
+			padding-inline: var(--svg-sparkline-padding, 0.375rem);
+		}
+		span:nth-of-type(1) {
+			grid-column: 1 / 2;
+			text-align: start;
+		}
+		span:nth-of-type(2) {
+			grid-column: 2 / 3;
+			text-align: end;
+		}
+		@media (prefers-reduced-motion: no-preference) {
+			:host([animate]) {
+				--duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
+				--first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
+				--second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--duration) + var(--first-delay)));
+			}
+			:host([animate]) svg:first-of-type {
+				clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+			}
+			:host([visible]) svg:first-of-type {
+				animation: swipe var(--duration) linear var(--first-delay) forwards;
+			}
+			:host([animate]) svg:last-of-type,
+			:host([animate]) span {
+				opacity: 0;
+			}
+			:host([visible]) svg:last-of-type,
+			:host([visible]) span {
+				animation: fadein var(--duration) linear var(--second-delay) forwards;
+			}
+		}
+		@keyframes swipe {
+			to {
+				clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+			}
+		}
+		@keyframes fadein {
+			to {
+				opacity: 1;
+			}
+		}
+	`;
 
 	static observedAttributes = [
 		"values",
@@ -80,12 +80,13 @@ class SVGSparkline extends HTMLElement {
 		"endpoint-color",
 		"endpoint-width",
 		"fill",
-		"gradient",
 		"fill-color",
+		"gradient",
 		"gradient-color",
 		"line-width",
 		"start-label",
 		"end-label",
+		"animate",
 		"animation-duration",
 		"animation-delay",
 	];
@@ -97,6 +98,17 @@ class SVGSparkline extends HTMLElement {
 		}
 
 		this.init();
+	}
+
+	attributeChangedCallback() {
+		this.initTemplate();
+		this.setCSS();
+	}
+
+	disconnectedCallback() {
+		if (this.observer) {
+			this.observer.unobserve(this);
+		}
 	}
 
 	render() {
@@ -143,54 +155,76 @@ class SVGSparkline extends HTMLElement {
 
 		const title =
 			this.title ||
-			`Sparkline ranging from ${this.getMinY(this.values)} to ${this.getMaxY(this.values)}.`;
+			`Sparkline ranging from ${this.getMinY(
+				this.values,
+			)} to ${this.getMaxY(this.values)}.`;
+
 		content.push(`
-      <svg width="${this.width}px" height="${this.height}px" viewBox="${this.getViewBox(this.values)}" preserveAspectRatio="none" role="img">
-        <title>${title}</title>
-    `);
+		<svg width="${this.width}px" height="${
+			this.height
+		}px" viewBox="${this.getViewBox(
+			this.values,
+		)}" preserveAspectRatio="none" role="img">
+			<title>${title}</title>
+		`);
 
 		let gradientID;
 		if (this.gradient) {
 			gradientID = this.makeID();
 			content.push(`
-        <defs>
-          <linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
-            <stop offset="0%" stop-color="${gradientColor}" stop-opacity="1" />
-            <stop offset="100%" stop-color="${gradientColor}" stop-opacity="0" />
-          </linearGradient>
-        </defs>
-      `);
+			<defs>
+				<linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
+					<stop offset="0%" stop-color="${gradientColor}" stop-opacity="1" />
+					<stop offset="100%" stop-color="${gradientColor}" stop-opacity="0" />
+				</linearGradient>
+			</defs>
+			`);
 		}
 
 		if (this.fill || this.gradient) {
 			content.push(`
-        <path
-            d="${this.getPath(this.values, this.curve)} L ${this.getFinalX(this.values)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(this.values)} Z"
-            fill="${this.fill ? gradientColor : `url('#svg-sparkline-gradient-${gradientID}')`}"
-            stroke="transparent"
-        />
-      `);
+			<path
+				d="${this.getPath(this.values, this.curve)} L ${this.getFinalX(
+				this.values,
+			)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(
+				this.values,
+			)} Z"
+				fill="${
+					this.fill
+						? gradientColor
+						: `url('#svg-sparkline-gradient-${gradientID}')`
+				}"
+				stroke="transparent"
+			/>
+			`);
 		}
 
 		content.push(`
-      <path
-          d="${this.getPath(this.values, this.curve)}"
-          stroke="${color}"
-          stroke-width="${this.lineWidth}"
-          stroke-linecap="round"
-          fill="transparent"
-          vector-effect="non-scaling-stroke"
-      />
-    `);
+		<path
+			d="${this.getPath(this.values, this.curve)}"
+			stroke="${color}"
+			stroke-width="${this.lineWidth}"
+			stroke-linecap="round"
+			fill="transparent"
+			vector-effect="non-scaling-stroke"
+		/>
+		`);
 
 		content.push(`</svg>`);
 
 		if (this.endpoint) {
 			content.push(`
-        <svg width="${this.width}px" height="${this.height}px" viewBox="0 0 ${this.width} ${this.height}" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
-          <circle r="${this.endpointWidth / 2}" cx="${this.width}" cy="${(this.height / this.getAdjustedMaxY(this.values)) * this.getFinalY(this.values)}" fill="${endpointColor}"></circle>
-        </svg>
-      `);
+			<svg width="${this.width}px" height="${this.height}px" viewBox="0 0 ${
+				this.width
+			} ${
+				this.height
+			}" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
+				<circle r="${this.endpointWidth / 2}" cx="${this.width}" cy="${
+				(this.height / this.getAdjustedMaxY(this.values)) *
+				this.getFinalY(this.values)
+			}" fill="${endpointColor}"></circle>
+			</svg>
+			`);
 		}
 
 		if (this.endLabel) {
@@ -208,26 +242,28 @@ class SVGSparkline extends HTMLElement {
 	}
 
 	setCSS() {
-		let stylesheets = [this.getBaseCSS()];
-		if (this.hasAttribute("animation-duration")) {
-			let sheet = new CSSStyleSheet();
-			sheet.replaceSync(`
-        :host {
-          --animation-duration: ${this.getAttribute("animation-duration")};
-        }
-      `);
-			stylesheets.push(sheet);
+		if (typeof CSSStyleSheet === "function") {
+			let stylesheets = [this.getBaseCSS()];
+			if (this.hasAttribute("animation-duration")) {
+				let sheet = new CSSStyleSheet();
+				sheet.replaceSync(`
+					:host {
+					--animation-duration: ${this.getAttribute("animation-duration")};
+					}
+				`);
+				stylesheets.push(sheet);
+			}
+			if (this.hasAttribute("animation-delay")) {
+				let sheet = new CSSStyleSheet();
+				sheet.replaceSync(`
+					:host {
+					--animation-delay: ${this.getAttribute("animation-delay")};
+					}
+				`);
+				stylesheets.push(sheet);
+			}
+			this.shadowRoot.adoptedStyleSheets = stylesheets;
 		}
-		if (this.hasAttribute("animation-delay")) {
-			let sheet = new CSSStyleSheet();
-			sheet.replaceSync(`
-        :host {
-          --animation-delay: ${this.getAttribute("animation-delay")};
-        }
-      `);
-			stylesheets.push(sheet);
-		}
-		this.shadowRoot.adoptedStyleSheets = stylesheets;
 	}
 
 	initTemplate() {
@@ -254,8 +290,11 @@ class SVGSparkline extends HTMLElement {
 			1,
 		);
 
-		if (this.hasAttribute("animate")) {
-			const observer = new IntersectionObserver(
+		if (
+			this.hasAttribute("animate") &&
+			typeof IntersectionObserver === "function"
+		) {
+			const observer = (this.observer = new IntersectionObserver(
 				(entries, observer) => {
 					if (entries[0].intersectionRatio > threshold) {
 						this.setAttribute("visible", true);
@@ -263,18 +302,13 @@ class SVGSparkline extends HTMLElement {
 					}
 				},
 				{ threshold: threshold },
-			);
+			));
 			observer.observe(this);
 		}
 	}
 
 	init() {
 		this.initTemplate();
-	}
-
-	attributeChangedCallback() {
-		this.initTemplate();
-		this.setCSS();
 	}
 
 	maxDecimals(value, decimals = 2) {
@@ -338,7 +372,13 @@ class SVGSparkline extends HTMLElement {
 			true,
 		);
 
-		return `C ${this.maxDecimals(csx)},${Math.min(maxY, this.maxDecimals(csy))} ${this.maxDecimals(cex)},${Math.min(maxY, this.maxDecimals(cey))} ${i},${point}`;
+		return `C ${this.maxDecimals(csx)},${Math.min(
+			maxY,
+			this.maxDecimals(csy),
+		)} ${this.maxDecimals(cex)},${Math.min(
+			maxY,
+			this.maxDecimals(cey),
+		)} ${i},${point}`;
 	}
 
 	getPath(values, curve) {
@@ -350,7 +390,16 @@ class SVGSparkline extends HTMLElement {
 				.reduce((acc, point, i, a) => {
 					return i < 1
 						? `M 0,${point}`
-						: `${acc} ${curve ? this.bezierCommand(point, i, a, this.getAdjustedMaxY(values)) : this.lineCommand(point, i)}`;
+						: `${acc} ${
+								curve
+									? this.bezierCommand(
+											point,
+											i,
+											a,
+											this.getAdjustedMaxY(values),
+									  )
+									: this.lineCommand(point, i)
+						  }`;
 				}, "")
 		);
 	}
