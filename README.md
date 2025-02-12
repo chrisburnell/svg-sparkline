@@ -84,10 +84,10 @@ A Web Component that builds an SVG Sparkline.
 <svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" endpoint-color="red"></svg-sparkline>
 ```
 
-### Defined endpoint width
+### Defined endpoint radius
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" endpoint-width="12"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" endpoint-radius="12"></svg-sparkline>
 ```
 
 ### Without endpoint
@@ -96,10 +96,10 @@ A Web Component that builds an SVG Sparkline.
 <svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" endpoint="false"></svg-sparkline>
 ```
 
-### Defined line width
+### Defined line/stroke width
 
 ```html
-<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" line-width="6"></svg-sparkline>
+<svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" stroke-width="6"></svg-sparkline>
 ```
 
 ### Defined width and height

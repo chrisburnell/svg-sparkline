@@ -7,6 +7,9 @@ export default class SVGSparkline extends HTMLElement {
 
 	static css = `
 		:host {
+			--t-duration: var(--svg-sparkline-transition-duration, var(--transition-duration, 0.2s));
+			--t-easing: var(--svg-sparkline-transition-easing, var(--transition-easing, ease));
+			--t-delay: var(--svg-sparkline-transition-delay, var(--transition-delay, 0s));
 			display: grid;
 			display: inline-grid;
 			grid-template-columns: 1fr 1fr;
@@ -19,9 +22,8 @@ export default class SVGSparkline extends HTMLElement {
 			padding: var(--svg-sparkline-padding, 0.375rem);
 			overflow: visible;
 		}
-		:host(:not([curve])) svg:has(title),
-		:host(:not([curve="true"])) svg:has(title) {
-			overflow-y: hidden;
+		:is(path, circle) {
+			transition: all var(--t-duration) var(--t-easing) var(--t-delay);
 		}
 		svg[aria-hidden] {
 			pointer-events: none;
@@ -39,23 +41,26 @@ export default class SVGSparkline extends HTMLElement {
 		}
 		@media (prefers-reduced-motion: no-preference) {
 			:host([animate]) {
-				--duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
+				--a-duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
+				--a-easing: var(--svg-sparkline-animation-easing, var(--animation-easing, linear));
 				--first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
-				--second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--duration) + var(--first-delay)));
+				--second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--a-duration) + var(--first-delay)));
+				& svg:first-of-type {
+					clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+				}
+				& svg:last-of-type,
+				& span {
+					opacity: 0;
+				}
 			}
-			:host([animate]) svg:first-of-type {
-				clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-			}
-			:host([visible]) svg:first-of-type {
-				animation: swipe var(--duration) linear var(--first-delay) forwards;
-			}
-			:host([animate]) svg:last-of-type,
-			:host([animate]) span {
-				opacity: 0;
-			}
-			:host([visible]) svg:last-of-type,
-			:host([visible]) span {
-				animation: fadein var(--duration) linear var(--second-delay) forwards;
+			:host([visible]) {
+				& svg:first-of-type {
+					animation: swipe var(--a-duration) var(--a-easing) var(--first-delay) forwards;
+				}
+				& svg:last-of-type,
+				& span {
+					animation: fadein var(--a-duration) var(--a-easing) var(--second-delay) forwards;
+				}
 			}
 		}
 		@keyframes swipe {
@@ -78,17 +83,23 @@ export default class SVGSparkline extends HTMLElement {
 		"curve",
 		"endpoint",
 		"endpoint-color",
+		"endpoint-radius",
 		"endpoint-width",
 		"fill",
 		"fill-color",
 		"gradient",
 		"gradient-color",
 		"line-width",
+		"stroke-width",
 		"start-label",
 		"end-label",
 		"animate",
 		"animation-duration",
+		"animation-easing",
 		"animation-delay",
+		"transition-duration",
+		"transition-easing",
+		"transition-delay",
 	];
 
 	connectedCallback() {
@@ -125,8 +136,11 @@ export default class SVGSparkline extends HTMLElement {
 			this.getAttribute("curve") !== "false";
 		this.endpoint = this.getAttribute("endpoint") !== "false";
 		this.endpointColor = this.getAttribute("endpoint-color");
-		this.endpointWidth =
-			parseFloat(this.getAttribute("endpoint-width")) || 6;
+		this.endpointRadius = this.getAttribute("endpoint-radius")
+			? parseFloat(this.getAttribute("endpoint-radius"))
+			: this.getAttribute("endpoint-width")
+			? parseFloat(this.getAttribute("endpoint-width")) / 2
+			: 3;
 		this.fill =
 			this.hasAttribute("fill") && this.getAttribute("fill") !== "false";
 		this.gradient =
@@ -135,11 +149,17 @@ export default class SVGSparkline extends HTMLElement {
 		this.gradientColor =
 			this.getAttribute("fill-color") ||
 			this.getAttribute("gradient-color");
-		this.lineWidth = parseFloat(this.getAttribute("line-width")) || 2;
+		this.strokeWidth = this.getAttribute("stroke-width")
+			? parseFloat(this.getAttribute("stroke-width"))
+			: this.getAttribute("line-width")
+			? parseFloat(this.getAttribute("line-width"))
+			: 2;
 		this.startLabel = this.getAttribute("start-label");
 		this.endLabel = this.getAttribute("end-label");
 
 		const color = this.color || `var(--svg-sparkline-color, currentColor)`;
+		const strokeColor =
+			this.color || `var(--svg-sparkline-stroke-color, ${color})`;
 		const endpointColor =
 			this.endpointColor ||
 			`var(--svg-sparkline-endpoint-color, ${color})`;
@@ -202,8 +222,10 @@ export default class SVGSparkline extends HTMLElement {
 		content.push(`
 		<path
 			d="${this.getPath(this.values, this.curve)}"
-			stroke="${color}"
-			stroke-width="${this.lineWidth}"
+			stroke="${strokeColor}"
+			stroke-width="var(--svg-sparkline-stroke-width, var(--svg-sparkline-line-width, ${
+				this.strokeWidth
+			}))"
 			stroke-linecap="round"
 			fill="transparent"
 			vector-effect="non-scaling-stroke"
@@ -219,7 +241,7 @@ export default class SVGSparkline extends HTMLElement {
 			} ${
 				this.height
 			}" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
-				<circle r="${this.endpointWidth / 2}" cx="${this.width}" cy="${
+				<circle r="${this.endpointRadius}" cx="${this.width}" cy="${
 				(this.height / this.getAdjustedMaxY(this.values)) *
 				this.getFinalY(this.values)
 			}" fill="${endpointColor}"></circle>
@@ -244,24 +266,22 @@ export default class SVGSparkline extends HTMLElement {
 	setCSS() {
 		if (typeof CSSStyleSheet === "function") {
 			let stylesheets = [this.getBaseCSS()];
-			if (this.hasAttribute("animation-duration")) {
-				let sheet = new CSSStyleSheet();
-				sheet.replaceSync(`
-					:host {
-					--animation-duration: ${this.getAttribute("animation-duration")};
-					}
-				`);
-				stylesheets.push(sheet);
-			}
-			if (this.hasAttribute("animation-delay")) {
-				let sheet = new CSSStyleSheet();
-				sheet.replaceSync(`
-					:host {
-					--animation-delay: ${this.getAttribute("animation-delay")};
-					}
-				`);
-				stylesheets.push(sheet);
-			}
+			[
+				"animation-duration",
+				"animation-easing",
+				"animation-delay",
+				"transition-duration",
+				"transition-easing",
+				"transition-delay",
+			].forEach((attribute) => {
+				if (this.hasAttribute(attribute)) {
+					let sheet = new CSSStyleSheet();
+					sheet.replaceSync(`
+						:host { --${attribute}: ${this.getAttribute(attribute)}; }
+					`);
+					stylesheets.push(sheet);
+				}
+			});
 			this.shadowRoot.adoptedStyleSheets = stylesheets;
 		}
 	}

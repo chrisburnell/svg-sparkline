@@ -160,12 +160,15 @@ describe("<svg-sparkline> Web Component", () => {
 
 	it("Should be able to set the width of the line", () => {
 		const customElement = document.querySelector("svg-sparkline");
-		customElement.setAttribute("line-width", "10");
+		customElement.setAttribute("stroke-width", "10");
 
 		const pathElement = customElement.shadowRoot.querySelector(
 			"svg:first-of-type path",
 		);
-		assert.strictEqual(pathElement.getAttribute("stroke-width"), "10");
+		assert.strictEqual(
+			pathElement.getAttribute("stroke-width"),
+			"var(--svg-sparkline-stroke-width, var(--svg-sparkline-line-width, 10))",
+		);
 	});
 
 	it("Should be able to set the dimensions of the custom element", () => {
