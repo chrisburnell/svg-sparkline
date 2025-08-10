@@ -108,7 +108,12 @@ export default class SVGSparkline extends HTMLElement {
 			return;
 		}
 
-		this.init();
+		if (document.readyState !== "loading") {
+			this.init();
+			return;
+		}
+
+		document.addEventListener("DOMContentLoaded", () => this.init());
 	}
 
 	attributeChangedCallback() {
@@ -456,4 +461,9 @@ export default class SVGSparkline extends HTMLElement {
 	}
 }
 
-SVGSparkline.register();
+if (
+	!new URL(import.meta.url).searchParams.has("nodefine") &&
+	!new URL(import.meta.url).searchParams.has("noregister")
+) {
+	SVGSparkline.register();
+}
