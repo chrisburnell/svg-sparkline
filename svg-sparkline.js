@@ -1,5 +1,5 @@
 export default class SVGSparkline extends HTMLElement {
-	static register(tagName) {
+	static define(tagName) {
 		if ("customElements" in window) {
 			customElements.define(tagName || "svg-sparkline", SVGSparkline);
 		}
@@ -461,9 +461,6 @@ export default class SVGSparkline extends HTMLElement {
 	}
 }
 
-if (
-	!new URL(import.meta.url).searchParams.has("nodefine") &&
-	!new URL(import.meta.url).searchParams.has("noregister")
-) {
-	SVGSparkline.register();
+if (!new URL(import.meta.url).searchParams.has("nodefine")) {
+	SVGSparkline.define();
 }

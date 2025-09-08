@@ -1,6 +1,6 @@
 {
   "name": "@chrisburnell/svg-sparkline",
-  "version": "1.0.14-alpha.1",
+  "version": "1.0.14",
   "description": "A Web Component that builds an SVG Sparkline.",
   "license": "MIT",
   "repository": {
