@@ -1,6 +1,6 @@
 {
   "name": "@chrisburnell/svg-sparkline",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "A Web Component that builds an SVG Sparkline.",
   "license": "MIT",
   "repository": {
@@ -39,6 +39,9 @@
   },
   "main": "svg-sparkline.js",
   "scripts": {
+    "build": "npm run minify && npm run generate-cem",
+    "generate-cem": "npx cem analyze --config=custom-elements-manifest.config.js",
+    "minify": "esbuild svg-sparkline.js --minify-whitespace --minify-syntax --outfile=svg-sparkline.min.js",
     "start": "npx http-server .",
     "test": "node --test"
   },
@@ -50,7 +53,10 @@
     "web components"
   ],
   "devDependencies": {
-    "linkedom": "^0.18.4"
+    "@custom-elements-manifest/analyzer": "^0.10.10",
+    "esbuild": "^0.25.11",
+    "linkedom": "^0.18.12"
   },
-  "type": "module"
+  "type": "module",
+  "customElements": "custom-elements.json"
 }

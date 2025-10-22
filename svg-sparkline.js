@@ -1,10 +1,81 @@
+/**
+ * @tag svg-sparkline
+ * @summary A Web Component that builds an SVG Sparkline.
+ * @attr {number[]} values
+ * @attr {number} width
+ * @attr {number} height
+ * @attr {Color} color
+ * @attr {boolean} curve
+ * @attr {boolean} endpoint
+ * @attr {Color} endpoint-color
+ * @attr {number} endpoint-radius
+ * @attr {number} endpoint-width - Alias for `endpoint-radius`.
+ * @attr {boolean} fill
+ * @attr {Color} fill-color
+ * @attr {boolean} gradient
+ * @attr {Color} gradient-color
+ * @attr {number} stroke-width
+ * @attr {number} line-width - Alias for `stroke-width`.
+ * @attr {string} start-label
+ * @attr {string} end-label
+ * @attr {boolean} animate
+ * @attr {string} animation-duration
+ * @attr {string} animation-easing
+ * @attr {string} animation-delay
+ * @attr {string} transition-duration
+ * @attr {string} transition-easing
+ * @attr {string} transition-delay
+ */
 export default class SVGSparkline extends HTMLElement {
+	/**
+	 * @param {string} [tagName="relative-time"]
+	 */
 	static define(tagName) {
 		if ("customElements" in window) {
 			customElements.define(tagName || "svg-sparkline", SVGSparkline);
 		}
 	}
 
+	/**
+	 * @inheritdoc
+	 */
+	connectedCallback() {
+		if (!this.getAttribute("values")) {
+			console.error(`Missing \`values\` attribute!`, this);
+			return;
+		}
+
+		if (document.readyState !== "loading") {
+			this.#initTemplate();
+			return;
+		}
+
+		document.addEventListener("DOMContentLoaded", () =>
+			this.#initTemplate(),
+		);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	attributeChangedCallback() {
+		this.#initTemplate();
+		this.#setCSS();
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	disconnectedCallback() {
+		if (this.observer) {
+			this.observer.unobserve(this);
+		}
+	}
+
+	/**
+	 * @type {string}
+	 * @readonly
+	 */
 	static css = `
 		:host {
 			--t-duration: var(--svg-sparkline-transition-duration, var(--transition-duration, 0.2s));
@@ -75,6 +146,10 @@ export default class SVGSparkline extends HTMLElement {
 		}
 	`;
 
+	/**
+	 * @type {string[]}
+	 * @readonly
+	 */
 	static observedAttributes = [
 		"values",
 		"width",
@@ -102,32 +177,11 @@ export default class SVGSparkline extends HTMLElement {
 		"transition-delay",
 	];
 
-	connectedCallback() {
-		if (!this.getAttribute("values")) {
-			console.error(`Missing \`values\` attribute!`, this);
-			return;
-		}
-
-		if (document.readyState !== "loading") {
-			this.init();
-			return;
-		}
-
-		document.addEventListener("DOMContentLoaded", () => this.init());
-	}
-
-	attributeChangedCallback() {
-		this.initTemplate();
-		this.setCSS();
-	}
-
-	disconnectedCallback() {
-		if (this.observer) {
-			this.observer.unobserve(this);
-		}
-	}
-
-	render() {
+	/**
+	 * @returns {string}
+	 * @private
+	 */
+	#render() {
 		if (!this.hasAttribute("values")) {
 			return;
 		}
@@ -180,14 +234,14 @@ export default class SVGSparkline extends HTMLElement {
 
 		const title =
 			this.title ||
-			`Sparkline ranging from ${this.getMinY(
+			`Sparkline ranging from ${this.#getMinY(
 				this.values,
-			)} to ${this.getMaxY(this.values)}.`;
+			)} to ${this.#getMaxY(this.values)}.`;
 
 		content.push(`
 		<svg width="${this.width}px" height="${
 			this.height
-		}px" viewBox="${this.getViewBox(
+		}px" viewBox="${this.#getViewBox(
 			this.values,
 		)}" preserveAspectRatio="none" role="img">
 			<title>${title}</title>
@@ -195,7 +249,7 @@ export default class SVGSparkline extends HTMLElement {
 
 		let gradientID;
 		if (this.gradient) {
-			gradientID = this.makeID();
+			gradientID = this.#makeID();
 			content.push(`
 			<defs>
 				<linearGradient id="svg-sparkline-gradient-${gradientID}" gradientTransform="rotate(90)">
@@ -209,11 +263,11 @@ export default class SVGSparkline extends HTMLElement {
 		if (this.fill || this.gradient) {
 			content.push(`
 			<path
-				d="${this.getPath(this.values, this.curve)} L ${this.getFinalX(
+				d="${this.#getPath(this.values, this.curve)} L ${this.#getFinalX(
 				this.values,
-			)} ${this.getAdjustedMaxY(this.values)} L 0 ${this.getAdjustedMaxY(
+			)} ${this.#getAdjustedMaxY(
 				this.values,
-			)} Z"
+			)} L 0 ${this.#getAdjustedMaxY(this.values)} Z"
 				fill="${
 					this.fill
 						? gradientColor
@@ -226,7 +280,7 @@ export default class SVGSparkline extends HTMLElement {
 
 		content.push(`
 		<path
-			d="${this.getPath(this.values, this.curve)}"
+			d="${this.#getPath(this.values, this.curve)}"
 			stroke="${strokeColor}"
 			stroke-width="var(--svg-sparkline-stroke-width, var(--svg-sparkline-line-width, ${
 				this.strokeWidth
@@ -247,8 +301,8 @@ export default class SVGSparkline extends HTMLElement {
 				this.height
 			}" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
 				<circle r="${this.endpointRadius}" cx="${this.width}" cy="${
-				(this.height / this.getAdjustedMaxY(this.values)) *
-				this.getFinalY(this.values)
+				(this.height / this.#getAdjustedMaxY(this.values)) *
+				this.#getFinalY(this.values)
 			}" fill="${endpointColor}"></circle>
 			</svg>
 			`);
@@ -261,16 +315,24 @@ export default class SVGSparkline extends HTMLElement {
 		return content.join("");
 	}
 
-	getBaseCSS() {
+	/**
+	 * @returns {CSSStyleSheet}
+	 * @private
+	 */
+	#getBaseCSS() {
 		let sheet = new CSSStyleSheet();
 		sheet.replaceSync(SVGSparkline.css);
 
 		return sheet;
 	}
 
-	setCSS() {
+	/**
+	 * @returns {void}
+	 * @private
+	 */
+	#setCSS() {
 		if (typeof CSSStyleSheet === "function") {
-			let stylesheets = [this.getBaseCSS()];
+			let stylesheets = [this.#getBaseCSS()];
 			[
 				"animation-duration",
 				"animation-easing",
@@ -291,10 +353,14 @@ export default class SVGSparkline extends HTMLElement {
 		}
 	}
 
-	initTemplate() {
+	/**
+	 * @returns {void}
+	 * @private
+	 */
+	#initTemplate() {
 		if (this.shadowRoot) {
 			if (this.innerHTML.trim() === "") {
-				this.shadowRoot.innerHTML = this.render();
+				this.shadowRoot.innerHTML = this.#render();
 			} else {
 				this.shadowRoot.innerHTML = this.innerHTML;
 				this.innerHTML = "";
@@ -304,10 +370,10 @@ export default class SVGSparkline extends HTMLElement {
 
 		this.attachShadow({ mode: "open" });
 
-		this.setCSS();
+		this.#setCSS();
 
 		let template = document.createElement("template");
-		template.innerHTML = this.render();
+		template.innerHTML = this.#render();
 		this.shadowRoot.appendChild(template.content.cloneNode(true));
 
 		const threshold = Math.min(
@@ -332,23 +398,44 @@ export default class SVGSparkline extends HTMLElement {
 		}
 	}
 
-	init() {
-		this.initTemplate();
-	}
-
-	maxDecimals(value, decimals = 2) {
+	/**
+	 * @param {number} value
+	 * @param {number} [decimals=2]
+	 * @returns {number}
+	 * @private
+	 */
+	#maxDecimals(value, decimals = 2) {
 		return +value.toFixed(decimals);
 	}
 
-	getViewBox(values) {
-		return `0 0 ${values.length - 1} ${this.getAdjustedMaxY(values)}`;
+	/**
+	 * @param {number[]} values
+	 * @returns {string}
+	 * @private
+	 */
+	#getViewBox(values) {
+		return `0 0 ${values.length - 1} ${this.#getAdjustedMaxY(values)}`;
 	}
 
-	lineCommand(point, i) {
+	/**
+	 * @param {string} point
+	 * @param {string} i
+	 * @returns {string}
+	 * @private
+	 */
+	#lineCommand(point, i) {
 		return `L ${i},${point}`;
 	}
 
-	line(ax, ay, bx, by) {
+	/**
+	 * @param {number} ax
+	 * @param {number} ay
+	 * @param {number} bx
+	 * @param {number} by
+	 * @returns {Object<{length:number,angle:number}>}
+	 * @private
+	 */
+	#line(ax, ay, bx, by) {
 		const lengthX = bx - ax;
 		const lengthY = by - ay;
 
@@ -358,7 +445,18 @@ export default class SVGSparkline extends HTMLElement {
 		};
 	}
 
-	controlPoint(cx, cy, px, py, nx, ny, reverse) {
+	/**
+	 * @param {number} cx
+	 * @param {number} cy
+	 * @param {number} px
+	 * @param {number} py
+	 * @param {number} nx
+	 * @param {number} ny
+	 * @param {boolean} reverse
+	 * @returns {number[]}
+	 * @private
+	 */
+	#controlPoint(cx, cy, px, py, nx, ny, reverse) {
 		// When the current X,Y are the first or last point of the array,
 		// previous or next X,Y don't exist. Replace with current X,Y.
 		px = px || cx;
@@ -366,7 +464,7 @@ export default class SVGSparkline extends HTMLElement {
 		nx = nx || cx;
 		ny = ny || cy;
 
-		const line = this.line(px, py, nx, ny);
+		const line = this.#line(px, py, nx, ny);
 
 		const smoothing = 0.2;
 		const angle = line.angle + (reverse ? Math.PI : 0);
@@ -378,8 +476,16 @@ export default class SVGSparkline extends HTMLElement {
 		return [x, y];
 	}
 
-	bezierCommand(point, i, a, maxY) {
-		const [csx, csy] = this.controlPoint(
+	/**
+	 * @param {number} point
+	 * @param {number} i
+	 * @param {number} a
+	 * @param {number} maxY
+	 * @returns {string}
+	 * @private
+	 */
+	#bezierCommand(point, i, a, maxY) {
+		const [csx, csy] = this.#controlPoint(
 			i - 1,
 			a[i - 1],
 			i - 2,
@@ -387,7 +493,7 @@ export default class SVGSparkline extends HTMLElement {
 			i,
 			point,
 		);
-		const [cex, cey] = this.controlPoint(
+		const [cex, cey] = this.#controlPoint(
 			i,
 			point,
 			i - 1,
@@ -397,16 +503,22 @@ export default class SVGSparkline extends HTMLElement {
 			true,
 		);
 
-		return `C ${this.maxDecimals(csx)},${Math.min(
+		return `C ${this.#maxDecimals(csx)},${Math.min(
 			maxY,
-			this.maxDecimals(csy),
-		)} ${this.maxDecimals(cex)},${Math.min(
+			this.#maxDecimals(csy),
+		)} ${this.#maxDecimals(cex)},${Math.min(
 			maxY,
-			this.maxDecimals(cey),
+			this.#maxDecimals(cey),
 		)} ${i},${point}`;
 	}
 
-	getPath(values, curve) {
+	/**
+	 * @param {number[]} values
+	 * @param {boolean} curve
+	 * @returns {string}
+	 * @private
+	 */
+	#getPath(values, curve) {
 		return (
 			values
 				// flips each point in the vertical range
@@ -417,39 +529,68 @@ export default class SVGSparkline extends HTMLElement {
 						? `M 0,${point}`
 						: `${acc} ${
 								curve
-									? this.bezierCommand(
+									? this.#bezierCommand(
 											point,
 											i,
 											a,
-											this.getAdjustedMaxY(values),
+											this.#getAdjustedMaxY(values),
 									  )
-									: this.lineCommand(point, i)
+									: this.#lineCommand(point, i)
 						  }`;
 				}, "")
 		);
 	}
 
-	getFinalX(values) {
+	/**
+	 * @param {number[]} values
+	 * @returns {number}
+	 * @private
+	 */
+	#getFinalX(values) {
 		return values.length - 1;
 	}
 
-	getFinalY(values) {
+	/**
+	 * @param {number[]} values
+	 * @returns {number}
+	 * @private
+	 */
+	#getFinalY(values) {
 		return Math.max(...values) - values[values.length - 1] + 1;
 	}
 
-	getMinY(values) {
+	/**
+	 * @param {number[]} values
+	 * @returns {number}
+	 * @private
+	 */
+	#getMinY(values) {
 		return Math.min(...values);
 	}
 
-	getMaxY(values) {
+	/**
+	 * @param {number[]} values
+	 * @returns {number}
+	 * @private
+	 */
+	#getMaxY(values) {
 		return Math.max(...values);
 	}
 
-	getAdjustedMaxY(values) {
-		return this.getMaxY(values) + 1;
+	/**
+	 * @param {number[]} values
+	 * @returns {number}
+	 * @private
+	 */
+	#getAdjustedMaxY(values) {
+		return this.#getMaxY(values) + 1;
 	}
 
-	makeID() {
+	/**
+	 * @returns {string}
+	 * @private
+	 */
+	#makeID() {
 		const SEQUENCE =
 			"0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 		return Array.from({ length: 6 }).reduce((id, _) => {
