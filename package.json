@@ -1,6 +1,6 @@
 {
   "name": "@chrisburnell/svg-sparkline",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "A Web Component that builds an SVG Sparkline.",
   "license": "MIT",
   "repository": {
@@ -37,11 +37,21 @@
     "access": "public",
     "provenance": true
   },
-  "main": "svg-sparkline.js",
+  "main": "svg-sparkline.cjs",
+  "types": "svg-sparkline.d.ts",
+  "exports": {
+    ".": {
+      "types": "./svg-sparkline.d.ts",
+      "require": "./svg-sparkline.cjs",
+      "import": "./svg-sparkline.js"
+    }
+  },
   "scripts": {
-    "build": "npm run minify && npm run generate-cem",
-    "generate-cem": "npx cem analyze --config=custom-elements-manifest.config.js",
-    "minify": "esbuild svg-sparkline.js --minify-whitespace --minify-syntax --outfile=svg-sparkline.min.js",
+    "build": "npm run build:convert && npm run build:minify && npm run build:cem && npm run build:readme",
+    "build:cem": "npx cem analyze --config=custom-elements-manifest.config.js",
+    "build:convert": "esbuild svg-sparkline.js --platform=node --format=cjs --outfile=svg-sparkline.cjs",
+    "build:minify": "esbuild svg-sparkline.js --minify-whitespace --minify-syntax --outfile=svg-sparkline.min.js && esbuild svg-sparkline.cjs --minify-whitespace --minify-syntax --outfile=svg-sparkline.min.cjs",
+    "build:readme": "node cem-to-markdown.js",
     "start": "npx http-server .",
     "test": "node --test"
   },
@@ -53,8 +63,9 @@
     "web components"
   ],
   "devDependencies": {
-    "@custom-elements-manifest/analyzer": "^0.10.10",
-    "esbuild": "^0.25.11",
+    "@custom-elements-manifest/analyzer": "^0.11.0",
+    "@custom-elements-manifest/to-markdown": "^0.1.0",
+    "esbuild": "^0.27.2",
     "linkedom": "^0.18.12"
   },
   "type": "module",

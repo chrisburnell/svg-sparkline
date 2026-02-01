@@ -1,0 +1,9 @@
+# Dependencies
+node_modules/
+
+# Build outputs (generated during CI)
+svg-sparkline.cjs
+svg-sparkline.min.js
+svg-sparkline.min.cjs
+custom-elements.json
+custom-elements.md

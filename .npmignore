@@ -5,6 +5,7 @@
 .eslintrc.json
 .prettierrc
 .prettierignore
+cem-to-markdown.js
 custom-elements-manifest.config.js
 svg-sparkline.test.js
 assets

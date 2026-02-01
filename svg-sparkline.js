@@ -28,7 +28,7 @@
  */
 export default class SVGSparkline extends HTMLElement {
 	/**
-	 * @param {string} [tagName="relative-time"]
+	 * @param {string} [tagName="svg-sparkline"]
 	 */
 	static define(tagName) {
 		if ("customElements" in window) {
@@ -432,7 +432,7 @@ export default class SVGSparkline extends HTMLElement {
 	 * @param {number} ay
 	 * @param {number} bx
 	 * @param {number} by
-	 * @returns {Object<{length:number,angle:number}>}
+	 * @returns {{length: number, angle: number}}
 	 * @private
 	 */
 	#line(ax, ay, bx, by) {
