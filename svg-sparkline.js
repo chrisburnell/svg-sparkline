@@ -198,8 +198,8 @@ export default class SVGSparkline extends HTMLElement {
 		this.endpointRadius = this.getAttribute("endpoint-radius")
 			? parseFloat(this.getAttribute("endpoint-radius"))
 			: this.getAttribute("endpoint-width")
-			? parseFloat(this.getAttribute("endpoint-width")) / 2
-			: 3;
+				? parseFloat(this.getAttribute("endpoint-width")) / 2
+				: 3;
 		this.fill =
 			this.hasAttribute("fill") && this.getAttribute("fill") !== "false";
 		this.gradient =
@@ -211,8 +211,8 @@ export default class SVGSparkline extends HTMLElement {
 		this.strokeWidth = this.getAttribute("stroke-width")
 			? parseFloat(this.getAttribute("stroke-width"))
 			: this.getAttribute("line-width")
-			? parseFloat(this.getAttribute("line-width"))
-			: 2;
+				? parseFloat(this.getAttribute("line-width"))
+				: 2;
 		this.startLabel = this.getAttribute("start-label");
 		this.endLabel = this.getAttribute("end-label");
 
@@ -264,10 +264,10 @@ export default class SVGSparkline extends HTMLElement {
 			content.push(`
 			<path
 				d="${this.#getPath(this.values, this.curve)} L ${this.#getFinalX(
-				this.values,
-			)} ${this.#getAdjustedMaxY(
-				this.values,
-			)} L 0 ${this.#getAdjustedMaxY(this.values)} Z"
+					this.values,
+				)} ${this.#getAdjustedMaxY(
+					this.values,
+				)} L 0 ${this.#getAdjustedMaxY(this.values)} Z"
 				fill="${
 					this.fill
 						? gradientColor
@@ -301,9 +301,9 @@ export default class SVGSparkline extends HTMLElement {
 				this.height
 			}" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
 				<circle r="${this.endpointRadius}" cx="${this.width}" cy="${
-				(this.height / this.#getAdjustedMaxY(this.values)) *
-				this.#getFinalY(this.values)
-			}" fill="${endpointColor}"></circle>
+					(this.height / this.#getAdjustedMaxY(this.values)) *
+					this.#getFinalY(this.values)
+				}" fill="${endpointColor}"></circle>
 			</svg>
 			`);
 		}
@@ -381,20 +381,21 @@ export default class SVGSparkline extends HTMLElement {
 			1,
 		);
 
-		if (
-			this.hasAttribute("animate") &&
-			typeof IntersectionObserver === "function"
-		) {
-			const observer = (this.observer = new IntersectionObserver(
-				(entries, observer) => {
-					if (entries[0].intersectionRatio > threshold) {
-						this.setAttribute("visible", true);
-						observer.unobserve(this);
-					}
-				},
-				{ threshold: threshold },
-			));
-			observer.observe(this);
+		if (this.hasAttribute("animate")) {
+			if (typeof IntersectionObserver === "function") {
+				const observer = (this.observer = new IntersectionObserver(
+					(entries, observer) => {
+						if (entries[0].intersectionRatio > threshold) {
+							this.setAttribute("visible", true);
+							observer.unobserve(this);
+						}
+					},
+					{ threshold: threshold },
+				));
+				observer.observe(this);
+			} else {
+				this.setAttribute("visible", true);
+			}
 		}
 	}
 
@@ -534,9 +535,9 @@ export default class SVGSparkline extends HTMLElement {
 											i,
 											a,
 											this.#getAdjustedMaxY(values),
-									  )
+										)
 									: this.#lineCommand(point, i)
-						  }`;
+							}`;
 				}, "")
 		);
 	}
