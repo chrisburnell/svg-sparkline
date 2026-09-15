@@ -25,6 +25,8 @@
  * @attr {string} transition-duration
  * @attr {string} transition-easing
  * @attr {string} transition-delay
+ * @slot start-label
+ * @slot end-label
  */
 export default class SVGSparkline extends HTMLElement {
 	/**
@@ -73,80 +75,6 @@ export default class SVGSparkline extends HTMLElement {
 	}
 
 	/**
-	 * @type {string}
-	 * @readonly
-	 */
-	static css = `
-		:host {
-			--t-duration: var(--svg-sparkline-transition-duration, var(--transition-duration, 0.2s));
-			--t-easing: var(--svg-sparkline-transition-easing, var(--transition-easing, ease));
-			--t-delay: var(--svg-sparkline-transition-delay, var(--transition-delay, 0s));
-			display: grid;
-			display: inline-grid;
-			grid-template-columns: 1fr 1fr;
-			grid-template-rows: 1fr auto;
-		}
-		svg {
-			inline-size: auto;
-			grid-column: 1 / 3;
-			grid-row: 1 / 2;
-			padding: var(--svg-sparkline-padding, 0.375rem);
-			overflow: visible;
-		}
-		:is(path, circle) {
-			transition: all var(--t-duration) var(--t-easing) var(--t-delay);
-		}
-		svg[aria-hidden] {
-			pointer-events: none;
-		}
-		span {
-			padding-inline: var(--svg-sparkline-padding, 0.375rem);
-		}
-		span:nth-of-type(1) {
-			grid-column: 1 / 2;
-			text-align: start;
-		}
-		span:nth-of-type(2) {
-			grid-column: 2 / 3;
-			text-align: end;
-		}
-		@media (prefers-reduced-motion: no-preference) {
-			:host([animate]) {
-				--a-duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
-				--a-easing: var(--svg-sparkline-animation-easing, var(--animation-easing, linear));
-				--first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
-				--second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--a-duration) + var(--first-delay)));
-				& svg:first-of-type {
-					clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
-				}
-				& svg:last-of-type,
-				& span {
-					opacity: 0;
-				}
-			}
-			:host([visible]) {
-				& svg:first-of-type {
-					animation: swipe var(--a-duration) var(--a-easing) var(--first-delay) forwards;
-				}
-				& svg:last-of-type,
-				& span {
-					animation: fadein var(--a-duration) var(--a-easing) var(--second-delay) forwards;
-				}
-			}
-		}
-		@keyframes swipe {
-			to {
-				clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-			}
-		}
-		@keyframes fadein {
-			to {
-				opacity: 1;
-			}
-		}
-	`;
-
-	/**
 	 * @type {string[]}
 	 * @readonly
 	 */
@@ -176,6 +104,84 @@ export default class SVGSparkline extends HTMLElement {
 		"transition-easing",
 		"transition-delay",
 	];
+
+	/**
+	 * @type {string}
+	 * @readonly
+	 */
+	static css = `
+		:host {
+			--t-duration: var(--svg-sparkline-transition-duration, var(--transition-duration, 0.2s));
+			--t-easing: var(--svg-sparkline-transition-easing, var(--transition-easing, ease));
+			--t-delay: var(--svg-sparkline-transition-delay, var(--transition-delay, 0s));
+			display: grid;
+			display: inline-grid;
+			grid-template-columns: 1fr 1fr;
+			grid-template-rows: 1fr auto;
+		}
+		svg {
+			inline-size: auto;
+			grid-column: 1 / 3;
+			grid-row: 1 / 2;
+			padding: var(--svg-sparkline-padding, 0.375rem);
+			overflow: visible;
+		}
+		:is(path, circle) {
+			transition: all var(--t-duration) var(--t-easing) var(--t-delay);
+		}
+		svg[aria-hidden] {
+			pointer-events: none;
+		}
+		slot {
+			padding-inline: var(--svg-sparkline-padding, 0.375rem);
+		}
+		slot[name="start-label"],
+		slot[name="end-label"] {
+			display: block;
+		}
+		slot[name="start-label"] {
+			grid-column: 1 / 2;
+			text-align: start;
+		}
+		slot[name="end-label"] {
+			grid-column: 2 / 3;
+			text-align: end;
+		}
+		@media (prefers-reduced-motion: no-preference) {
+			:host([animate]) {
+				--a-duration: var(--svg-sparkline-animation-duration, var(--animation-duration, 1s));
+				--a-easing: var(--svg-sparkline-animation-easing, var(--animation-easing, linear));
+				--first-delay: var(--svg-sparkline-animation-first-delay, var(--svg-sparkline-animation-delay, var(--animation-delay, 1s)));
+				--second-delay: var(--svg-sparkline-animation-second-delay, calc(var(--a-duration) + var(--first-delay)));
+				& svg:first-of-type {
+					clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+				}
+				& svg:last-of-type,
+				& slot {
+					opacity: 0;
+				}
+			}
+			:host([visible]) {
+				& svg:first-of-type {
+					animation: swipe var(--a-duration) var(--a-easing) var(--first-delay) forwards;
+				}
+				& svg:last-of-type,
+				& slot {
+					animation: fadein var(--a-duration) var(--a-easing) var(--second-delay) forwards;
+				}
+			}
+		}
+		@keyframes swipe {
+			to {
+				clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+			}
+		}
+		@keyframes fadein {
+			to {
+				opacity: 1;
+			}
+		}
+	`;
 
 	/**
 	 * @returns {string}
@@ -228,9 +234,9 @@ export default class SVGSparkline extends HTMLElement {
 
 		let content = [];
 
-		if (this.startLabel) {
-			content.push(`<span>${this.startLabel}</span>`);
-		}
+		content.push(
+			`<slot name="start-label">${this.startLabel || ""}</slot>`,
+		);
 
 		const title =
 			this.title ||
@@ -308,9 +314,9 @@ export default class SVGSparkline extends HTMLElement {
 			`);
 		}
 
-		if (this.endLabel) {
-			content.push(`<span>${this.endLabel}</span>`);
-		}
+		content.push(
+			`<slot name="end-label">${this.endLabel || ""}</slot>`,
+		);
 
 		return content.join("");
 	}
@@ -359,12 +365,7 @@ export default class SVGSparkline extends HTMLElement {
 	 */
 	#initTemplate() {
 		if (this.shadowRoot) {
-			if (this.innerHTML.trim() === "") {
-				this.shadowRoot.innerHTML = this.#render();
-			} else {
-				this.shadowRoot.innerHTML = this.innerHTML;
-				this.innerHTML = "";
-			}
+			this.shadowRoot.innerHTML = this.#render() || "";
 			return;
 		}
 
@@ -372,8 +373,14 @@ export default class SVGSparkline extends HTMLElement {
 
 		this.#setCSS();
 
+		[...this.childNodes].forEach((node) => {
+			if (node.nodeType !== Node.ELEMENT_NODE || !node.hasAttribute("slot")) {
+				node.remove();
+			}
+		});
+
 		let template = document.createElement("template");
-		template.innerHTML = this.#render();
+		template.innerHTML = this.#render() || "";
 		this.shadowRoot.appendChild(template.content.cloneNode(true));
 
 		const threshold = Math.min(

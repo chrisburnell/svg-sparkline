@@ -39,7 +39,10 @@
     </p>
     <h2 id="animation-delay">Defined Animation Delay</h2>
     <p>
-        <svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" start-label="Start" end-label="End" animate="true" animation-delay="2s"></svg-sparkline>
+        <svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" animate="true" animation-delay="2s">
+            <span slot="start-label">Start</span>
+            <span slot="end-label">End</span>
+        </svg-sparkline>
     </p>
     <h2 id="color">Defined color</h2>
     <p>
@@ -85,7 +88,7 @@
     <h2 id="server-rendered">Server-rendered and hydrated</h2>
     <p>
         <svg-sparkline values="8,3,2,7,9,1,5,6,4,0,0,10,10,3,8,2,7,1,9" start-label="Start" end-label="End">
-          <span>Start</span>
+          <span slot="start-label">Start</span>
           <svg width="200px" height="36px" viewBox="0 0 15 12" preserveAspectRatio="none" role="img">
             <title>Sparkline ranging from 1 to 10.</title>
             <path d="M 0,3 L 1,8 L 2,9 L 3,4 L 4,2 L 5,10 L 6,6 L 7,5 L 8,7 L 9,1 L 10,8 L 11,3 L 12,9 L 13,4 L 14,10 L 15,2" stroke="var(--svg-sparkline-color, currentColor)" stroke-width="2" stroke-linecap="round" fill="transparent" vector-effect="non-scaling-stroke"></path>
@@ -94,7 +97,7 @@
             <title>Sparkline Endpoint</title>
             <circle r="3" cx="200" cy="6" fill="var(--svg-sparkline-endpoint-color, currentColor)"></circle>
           </svg>
-          <span>End</span>
+          <span slot="end-label">End</span>
         </svg-sparkline>
     </p>
     <style>

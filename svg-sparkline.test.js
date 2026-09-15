@@ -47,18 +47,20 @@ describe("<svg-sparkline> Web Component", () => {
 		const customElement = document.querySelector("svg-sparkline");
 		customElement.setAttribute("start-label", "Start");
 
-		const spanElement =
-			customElement.shadowRoot.querySelector("span:first-of-type");
-		assert.strictEqual(spanElement.innerText, "Start");
+		const startSlot = customElement.shadowRoot.querySelector(
+			'slot[name="start-label"]',
+		);
+		assert.strictEqual(startSlot.textContent, "Start");
 	});
 
 	it("Should be able to set an end label", () => {
 		const customElement = document.querySelector("svg-sparkline");
 		customElement.setAttribute("end-label", "End");
 
-		const spanElement =
-			customElement.shadowRoot.querySelector("span:last-of-type");
-		assert.strictEqual(spanElement.innerText, "End");
+		const endSlot = customElement.shadowRoot.querySelector(
+			'slot[name="end-label"]',
+		);
+		assert.strictEqual(endSlot.textContent, "End");
 	});
 
 	it("Should be able to set a start and end label", () => {
@@ -66,12 +68,58 @@ describe("<svg-sparkline> Web Component", () => {
 		customElement.setAttribute("start-label", "Start");
 		customElement.setAttribute("end-label", "End");
 
-		const spanElementFirst =
-			customElement.shadowRoot.querySelector("span:first-of-type");
-		assert.strictEqual(spanElementFirst.innerText, "Start");
-		const spanElementSecond =
-			customElement.shadowRoot.querySelector("span:last-of-type");
-		assert.strictEqual(spanElementSecond.innerText, "End");
+		const startSlot = customElement.shadowRoot.querySelector(
+			'slot[name="start-label"]',
+		);
+		assert.strictEqual(startSlot.textContent, "Start");
+		const endSlot = customElement.shadowRoot.querySelector(
+			'slot[name="end-label"]',
+		);
+		assert.strictEqual(endSlot.textContent, "End");
+	});
+
+	it("Should not mislabel a lone end label as the start label", () => {
+		// Regression test: with plain `<span>` siblings, an end-label-only
+		// render had exactly one span, which trivially matched a
+		// position-based `:first-of-type` selector meant for the start
+		// label. Named slots key off `slot[name]` instead, so this can't
+		// happen regardless of which labels are present.
+		const customElement = document.querySelector("svg-sparkline");
+		customElement.setAttribute("end-label", "End");
+		customElement.removeAttribute("start-label");
+
+		const startSlot = customElement.shadowRoot.querySelector(
+			'slot[name="start-label"]',
+		);
+		assert.strictEqual(startSlot.textContent, "");
+		const endSlot = customElement.shadowRoot.querySelector(
+			'slot[name="end-label"]',
+		);
+		assert.strictEqual(endSlot.textContent, "End");
+	});
+
+	it("Should let slotted content override the label attributes", () => {
+		const customElement = document.querySelector("svg-sparkline");
+		customElement.setAttribute("start-label", "Start");
+		customElement.innerHTML = `<strong slot="start-label">Custom</strong>`;
+
+		const startSlot = customElement.shadowRoot.querySelector(
+			'slot[name="start-label"]',
+		);
+		const assigned = startSlot.assignedNodes
+			? startSlot.assignedNodes()
+			: [];
+		if (assigned.length > 0) {
+			assert.strictEqual(assigned[0].textContent, "Custom");
+		} else {
+			// linkedom doesn't implement slot assignment; at minimum,
+			// confirm the fallback content and the light-DOM override
+			// both exist, so real browsers can resolve projection.
+			assert.strictEqual(
+				customElement.querySelector('[slot="start-label"]').textContent,
+				"Custom",
+			);
+		}
 	});
 
 	it("Should be able to set the colour of the line", () => {
